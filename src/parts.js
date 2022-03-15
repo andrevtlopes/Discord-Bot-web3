@@ -1,9 +1,22 @@
-export const partTypes = { eye: 1, mouth: 2, hat: 3, weapon: 4, ear: 5, tail: 6 },
+export const partTypes = {
+        eye: 1,
+        mouth: 2,
+        hat: 3,
+        weapon: 4,
+        ear: 5,
+        tail: 6,
+    },
     classes = { mage: 1, warrior: 2, support: 3, ranger: 4, assassin: 5 },
     types = { normal: 0, legend: 1 },
     factions = { thunder: 1, fire: 2, earth: 3, wind: 4, water: 5, yinyang: 6 },
     lifeStages = { newborn: 1, adult: 2 },
-    partArray = ['eyes', 'mouth', 'hair', 'hand', 'ears', 'tail'];
+    partArray = ['eyes', 'mouth', 'hair', 'hand', 'ears', 'tail'],
+    importantPartArray = [
+        { name: 'eyes', id: 1 },
+        { name: 'hair', id: 3 },
+        { name: 'hand', id: 4 },
+        { name: 'tail', id: 6 },
+    ];
 export const parts = {
     1: {
         id: 1,

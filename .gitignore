@@ -106,3 +106,4 @@ dist
 *.env
 *.csv
 local.js
+*.sqlite

@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+	  "allowSyntheticDefaultImports": true,
+	  "esModuleInterop": true,
+	  "outDir": "build",
+	  "module": "commonjs",
+	  "strict": true,
+	  "target": "es6",
+	  "typeRoots": [ "./types", "./node_modules/@types"],
+	  "resolveJsonModule": true,
+	  "allowJs": true
+	},
+	"ts-node": {
+		"files": true
+	},
+	"include": ["src/"],
+	"exclude": ["node_modules", "types"]
+  }
+  

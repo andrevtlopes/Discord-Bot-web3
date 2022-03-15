@@ -1,6 +1,7 @@
-import { gql } from 'graphql-request';
-
-const pet = gql`
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const graphql_request_1 = require("graphql-request");
+const query = (0, graphql_request_1.gql) `
     query pet($id: Int!) {
         pet(id: $id) {
             id
@@ -55,5 +56,4 @@ const pet = gql`
         }
     }
 `;
-
-export default pet;
+exports.default = query;

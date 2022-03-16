@@ -227,3 +227,10 @@ export function getPartsNumber(part, partType) {
     }
     return rets;
 }
+
+export function getPartNumber(part) {
+    return Object.keys(parts).find(
+        (key) =>
+            parts[key].name.toLowerCase() === part?.toLowerCase()
+    ) ?? null;
+}

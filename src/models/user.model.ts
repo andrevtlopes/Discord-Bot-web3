@@ -1,4 +1,5 @@
-import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import { Model, InferAttributes, InferCreationAttributes, CreationOptional, HasManyGetAssociationsMixin, HasManyCountAssociationsMixin, HasManyAddAssociationMixin, HasManyCreateAssociationMixin } from 'sequelize';
+import Snipe from './snipe.model';
 
 // order of InferAttributes & InferCreationAttributes is important.
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
@@ -8,6 +9,10 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 	declare subscriptionDue: CreationOptional<Date>;
 	declare txID: CreationOptional<string>;
 	declare discordID: string;
+
+	declare getSnipes: HasManyGetAssociationsMixin<Snipe>;
+	declare createSnipe: HasManyCreateAssociationMixin<Snipe>;
+	declare countSnipes: HasManyCountAssociationsMixin;
 
 	isSubscribed(): boolean {
 		const now = new Date();

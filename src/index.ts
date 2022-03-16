@@ -6,8 +6,7 @@ import { GraphQLClient, gql } from 'graphql-request';
 import search from './search';
 import breed from './breed';
 import simpleSearch from './simpleSearch';
-import { getNetwork } from '@ethersproject/networks';
-import { providers, utils } from 'ethers';
+import { utils } from 'ethers';
 import query from './query/index';
 import { byId, getLifeStage, getPartName } from './searchHelper';
 import { importantPartArray, partArray, partTypes } from './parts';
@@ -18,6 +17,10 @@ import { factions } from './utils/types';
 import provider from './utils/provider';
 import subscription from './subscription';
 import User from './models/user.model';
+import sniper from './sniper';
+import printNinneko from './utils/printNinneko';
+import { sequelize } from './db';
+import Snipe from './models/snipe.model';
 
 async function main() {
     const client = new Discord.Client({
@@ -49,57 +52,19 @@ async function main() {
                 id: parseInt(tokenId, 16),
             };
 
-            let pet: any = { forSale: 0 };
-            // while (pet?.forSale !== 1) {
-                const data = await graphClient.request(query.pet, variables);
-                console.log(JSON.stringify(data, undefined, 2));
-                pet = data.pet;
-            // }
-
-            let petArray = [];
-            let idx = 1;
-
-            for (const part of partArray) {
-                if (idx % 2 && part !== 'ear' && part !== 'mouth') {
-                    petArray.push([
-                        '',
-                        byId(partTypes, idx)?.toUpperCase(),
-                        byId(partTypes, idx + 1)?.toUpperCase(),
-                    ]);
-                    petArray.push([
-                        'D',
-                        getPartName(pet[part + 'D']),
-                        getPartName(pet[partArray[idx - 1] + 'D']),
-                    ]);
-                    petArray.push([
-                        'H1',
-                        getPartName(pet[part + 'R']),
-                        getPartName(pet[partArray[idx - 1] + 'R']),
-                    ]);
-                    petArray.push([
-                        'H2',
-                        getPartName(pet[part + 'R1']),
-                        getPartName(pet[partArray[idx - 1] + 'R1']),
-                    ]);
-                    petArray.push(['', '', '']);
-                }
-                idx = idx + 1;
-            }
-
-            const table = new AsciiTable3()
-                .setHeading(
-                    pet.id,
-                    pet.name,
-                    utils.formatEther(parseInt(log?.data, 16).toString()) + ' BNB'
-                )
-                .setAlign(3, AlignmentEnum.RIGHT)
-                .addRowMatrix(petArray);
-
-            table.setStyle('compact');
+            const data = await graphClient.request(query.pet, variables);
+            const pet = data.pet;
 
             (
-                client.channels.cache.get('952338766511628378') as TextChannel
-            ).send('```' + table.toString() + '```');
+                client.channels.cache.get('953447957896761384') as TextChannel
+            ).send({
+                embeds: [
+                    await printNinneko(
+                        pet,
+                        utils.formatEther(parseInt(log.data, 16).toString())
+                    ),
+                ],
+            });
         }
     });
 
@@ -120,55 +85,66 @@ async function main() {
             const data = await graphClient.request(query.pet, variables);
             const pet = data.pet;
 
-            const fields = partArray.map((part, idx) => ({
-                name: byId(partTypes, idx + 1)?.toUpperCase(),
-                value: `${getPartName(pet[part + 'D'])}\n${getPartName(
-                    pet[part + 'R']
-                )}\n${getPartName(pet[part + 'R1'])}`,
-                inline: true,
-            }));
-
-            const lifeStage = getLifeStage(pet.createdAt);
-             // @ts-ignore
-            const color = factions[pet.faction].color;
-           
-            const exampleEmbed = new MessageEmbed()
-                .setColor(color) // 00ab55
-                .setTitle(`${pet.id} - ${pet.name}`)
-                .setURL(`https://market.ninneko.com/pet/${pet.id}`)
-                // .setDescription('Some description here')
-                .setThumbnail(pet.avatarURL)
-                .addFields(
-                    {
-                        name: 'Faction',
-                        // @ts-ignore
-                        value: factions[pet.faction].name,
-                        inline: true,
-                    },
-                    {
-                        name: 'Price',
-                        value: utils.formatEther(parseInt(log?.data, 16).toString()) + ' BNB',
-                        inline: true,
-                    },
-                    {
-                        name: lifeStage === 'Adult' ? 'Breeds' : 'New Born',
-                        value:
-                            lifeStage === 'Adult'
-                                ? `${pet.breedCount}/6\n`
-                                : lifeStage,
-                        inline: true,
-                    }
-                )
-                .addFields(fields);
-            // .setImage('https://i.imgur.com/AfFp7pu.png')
-            // .setTimestamp()
-            // .setFooter({ text: factions[pet.faction].name, iconURL: factions[pet.faction].imageURL });
+            const ninneko = await printNinneko(
+                pet,
+                utils.formatEther(parseInt(log.data, 16).toString())
+            );
 
             (
                 client.channels.cache.get('952338766511628378') as TextChannel
-            ).send({ embeds: [exampleEmbed] });
+            ).send({
+                embeds: [
+                    ninneko
+                ]
+            });
 
-            // client.channels.cache.get('952338766511628378').send('```' + table.toString() + '```');
+            const snipes = await Snipe.findAll();
+
+            for (const snipe of snipes) {
+                const user = await snipe.getUser();
+                if (user && user.isSubscribed()) {
+                    const member = await client.users.fetch(user.discordID);
+                    if (snipe.compareSnipeWithNinneko(pet)) {
+                        member?.send({
+                            embeds: [
+                                ninneko
+                            ]
+                        });
+                    }
+                }
+            }
+        }
+    });
+
+    client.on('interactionCreate', async (interaction) => {
+        if (!interaction.isCommand()) return;
+
+        const user = await User.findOne({
+            where: { discordID: interaction.member?.user.id },
+        });
+
+        const { commandName } = interaction;
+
+        if (user?.isSubscribed()) {
+            if (commandName === 'ping') {
+                await interaction.reply('Pong!');
+            } else if (commandName === 'subscribe') {
+                await interaction.reply('Already Subscribed');
+            } else if (commandName === 'snipe') {
+                await sniper.add(user, interaction);
+            } else if (commandName === 'snipecheck') {
+                await sniper.check();
+            } else if (commandName === 'sniperemove') {
+                await sniper.remove();
+            }
+        } else {
+            if (commandName === 'subscribe') {
+                await subscription.subscribe(user, interaction);
+            } else {
+                await interaction.reply(
+                    'Please, subscribe to use this command'
+                );
+            }
         }
     });
 
@@ -180,7 +156,9 @@ async function main() {
         const args = commandBody.split('@');
         const command = args?.shift()?.toLowerCase();
 
-        let user = await User.findOne({ where: { discordID: message.author.id } });
+        let user = await User.findOne({
+            where: { discordID: message.author.id },
+        });
         if (user?.isSubscribed()) {
             if (command === 'ping') {
                 const timeTaken = Date.now() - message.createdTimestamp;
@@ -198,45 +176,14 @@ async function main() {
                 message.reply(await simpleSearch(args, graphClient));
             } else if (command === 'snipe') {
             }
-        }
-        else {
+        } else {
             if (command === 'subscribe') {
-                try {
-                    const subArgs = args
-                        ?.shift()
-                        ?.toLowerCase()
-                        .split(':')
-                        .map((args) => (args === '' ? null : args));
-                    
-                    const publicAddress = subArgs?.shift();
-                    const txID = subArgs?.shift();
-    
-                    if (!user && txID && publicAddress) {
-                        let created;
-                        user = await User.create({ publicAddress, discordID: message.author.id })
-                    }
-                    if (user && txID) {
-                        if (await subscription.add(user, txID)) {
-                            message.reply('Subscribed until next week');
-                        }
-                    }
-                    else {
-                        message.reply('Something went wrong, try again or send a ticket');
-                    }
-                } catch (e: any) {
-                    if (e.message) {
-                        message.reply(e.message);
-                    } else {
-                        console.log(e);
-                    }
-                }
-            }
-            else {
-                message.reply('Please, subscribe to use this command');
             }
         }
-
     });
+
+    // Create new tables
+    await sequelize.sync();
 
     // const data = await graphClient.request(query, variables);
     // console.log(JSON.stringify(data, undefined, 2));

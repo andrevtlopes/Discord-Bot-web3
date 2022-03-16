@@ -3,6 +3,7 @@ import { BIGINT, DATE, INTEGER, Sequelize, STRING } from 'sequelize';
 import User from './models/user.model';
 import Ninneko from './models/ninneko.model';
 import SaleHistory from './models/saleHistory.model';
+import Snipe from './models/snipe.model';
 
 const sequelize = new Sequelize('nps', '', undefined, {
 	dialect: 'sqlite',
@@ -183,9 +184,39 @@ SaleHistory.init(
 	}
 );
 
-Ninneko.hasMany(SaleHistory);
+Snipe.init(
+	{
+		id: {
+			type: INTEGER.UNSIGNED,
+			autoIncrement: true,
+			primaryKey: true
+		},
+		name: {
+			type: STRING,
+			allowNull: false,
+			unique: true,
+		},
+		eyesD: INTEGER.UNSIGNED,
+		eyesR: INTEGER.UNSIGNED,
+		eyesR1: INTEGER.UNSIGNED,
+		hairD: INTEGER.UNSIGNED,
+		hairR: INTEGER.UNSIGNED,
+		hairR1: INTEGER.UNSIGNED,
+		handD: INTEGER.UNSIGNED,
+		handR: INTEGER.UNSIGNED,
+		handR1: INTEGER.UNSIGNED,
+		tailD: INTEGER.UNSIGNED,
+		tailR: INTEGER.UNSIGNED,
+		tailR1: INTEGER.UNSIGNED,
+	},
+	{
+		tableName: 'snipes',
+		sequelize,
+	}
+);
 
-// Create new tables
-sequelize.sync();
+Ninneko.hasMany(SaleHistory);
+User.hasMany(Snipe);
+Snipe.belongsTo(User);
 
 export { sequelize };

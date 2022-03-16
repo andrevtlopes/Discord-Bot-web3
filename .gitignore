@@ -107,3 +107,4 @@ dist
 *.csv
 local.js
 *.sqlite
+*.sqlite-journal

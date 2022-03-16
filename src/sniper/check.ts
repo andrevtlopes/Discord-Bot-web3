@@ -28,9 +28,9 @@ const checkSnipe = async (user: User): Promise<string> => {
         for (const snipe of snipes) {
             const fields = importantPartArray.map((part) => 
                 `${byId(partTypes, part.id)?.toUpperCase()}: ${getPartName(
-                    (snipe as any)[part + 'D']
-                )} | ${getPartName((snipe as any)[part + 'R'])} | ${getPartName(
-                    (snipe as any)[part + 'R1']
+                    (snipe as any)[part.name + 'D']
+                )} | ${getPartName((snipe as any)[part.name + 'R'])} | ${getPartName(
+                    (snipe as any)[part.name + 'R1']
                 )}`,
             );
             snipeArray.push(`**${snipe.name}**\n${fields.join('\n')}`);

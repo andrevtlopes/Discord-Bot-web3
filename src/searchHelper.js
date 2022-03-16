@@ -156,7 +156,7 @@ export function getR1R2(pet, part='hand') {
 
 export function getPartName(partID) {
     const partName = parts?.[partID]?.name;
-    return partName ? `${partName}` : '\u2B1C';
+    return partName ? `${partName}` : '\u25AB';
 }
 
 export function getPetR1R2Prob(pet) {

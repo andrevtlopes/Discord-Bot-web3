@@ -60,10 +60,7 @@ const commands = [
                 .setRequired(false)
         )
         .addStringOption((option) =>
-            option
-                .setName('eye')
-                .setDescription('Eye Name')
-                .setRequired(false)
+            option.setName('eye').setDescription('Eye Name').setRequired(false)
         )
         .addStringOption((option) =>
             option
@@ -78,10 +75,7 @@ const commands = [
                 .setRequired(false)
         )
         .addStringOption((option) =>
-            option
-                .setName('hat')
-                .setDescription('Hat Name')
-                .setRequired(false)
+            option.setName('hat').setDescription('Hat Name').setRequired(false)
         )
         .addStringOption((option) =>
             option
@@ -114,7 +108,7 @@ const commands = [
                 .setRequired(false)
         )
         .toJSON(),
-        new SlashCommandBuilder()
+    new SlashCommandBuilder()
         .setName('search')
         .setDescription(
             'Search for a ninnekos with H1 and H2 filter sorted by price'
@@ -130,7 +124,7 @@ const commands = [
                 .setName('lifestage')
                 .setDescription('Life Stage of Ninnekos (Adult or New Born)')
                 .setRequired(false)
-                .setChoices()
+                .setChoices([['Adult', 'adult'], ['New Born', 'newborn']])
         )
         .addStringOption((option) =>
             option
@@ -151,10 +145,7 @@ const commands = [
                 .setRequired(false)
         )
         .addStringOption((option) =>
-            option
-                .setName('eye')
-                .setDescription('Eye Name')
-                .setRequired(false)
+            option.setName('eye').setDescription('Eye Name').setRequired(false)
         )
         .addStringOption((option) =>
             option
@@ -169,10 +160,7 @@ const commands = [
                 .setRequired(false)
         )
         .addStringOption((option) =>
-            option
-                .setName('hat')
-                .setDescription('Hat Name')
-                .setRequired(false)
+            option.setName('hat').setDescription('Hat Name').setRequired(false)
         )
         .addStringOption((option) =>
             option
@@ -204,6 +192,22 @@ const commands = [
                 .setDescription('Tail H2 Name')
                 .setRequired(false)
         )
+        .toJSON(),
+    new SlashCommandBuilder()
+        .setName('sniperemove')
+        .setDescription('Remove a Snipe using its name')
+        .addStringOption((option) =>
+            option
+                .setName('name')
+                .setDescription(
+                    'Snipe name (use check if you forget the name of the snipe)'
+                )
+                .setRequired(true)
+        )
+        .toJSON(),
+    new SlashCommandBuilder()
+        .setName('snipecheck')
+        .setDescription('Show the current Snipes')
         .toJSON(),
 ];
 

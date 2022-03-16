@@ -1,19 +1,12 @@
 import './db';
 import 'dotenv/config';
 
-import Discord, { MessageEmbed, TextChannel } from 'discord.js';
+import Discord, { TextChannel } from 'discord.js';
 import { GraphQLClient, gql } from 'graphql-request';
 import search from './search';
-import breed from './breed';
 import simpleSearch from './simpleSearch';
 import { utils } from 'ethers';
 import query from './query/index';
-import { byId, getLifeStage, getPartName } from './searchHelper';
-import { importantPartArray, partArray, partTypes } from './parts';
-// @ts-ignore
-import { AsciiTable3, AlignmentEnum } from 'ascii-table3';
-
-import { factions } from './utils/types';
 import provider from './utils/provider';
 import subscription from './subscription';
 import User from './models/user.model';
@@ -23,6 +16,11 @@ import { sequelize } from './db';
 import Snipe from './models/snipe.model';
 
 async function main() {
+    let disableRecently = false;
+    if (process.env.NODE_ENV !== 'production') {
+        disableRecently = true;
+        console.log('Recently disabled!')
+    }
     const client = new Discord.Client({
         intents: ['GUILDS', 'GUILD_MESSAGES'],
     });
@@ -38,83 +36,86 @@ async function main() {
         // client.channels.cache.get('952338766511628378').send('Bot Started!');
     });
 
-    const filterSold = {
-        address: '0xdfe8f54b894793bfbd2591033e7a307ed28a8d40',
-        topics: [
-            '0x7bd0b0502f39fae4cc20b3da611aa9e529ffa26435779fe6f2068f197151d9d0',
-        ],
-    };
+    if (!disableRecently) {
 
-    provider.on(filterSold, async (log, event) => {
-        if (log) {
-            const tokenId = log?.topics[1];
-            const variables = {
-                id: parseInt(tokenId, 16),
-            };
+        const filterSold = {
+            address: '0xdfe8f54b894793bfbd2591033e7a307ed28a8d40',
+            topics: [
+                '0x7bd0b0502f39fae4cc20b3da611aa9e529ffa26435779fe6f2068f197151d9d0',
+            ],
+        };
 
-            const data = await graphClient.request(query.pet, variables);
-            const pet = data.pet;
+        provider.on(filterSold, async (log, event) => {
+            if (log) {
+                const tokenId = log?.topics[1];
+                const variables = {
+                    id: parseInt(tokenId, 16),
+                };
 
-            (
-                client.channels.cache.get('953447957896761384') as TextChannel
-            ).send({
-                embeds: [
-                    await printNinneko(
-                        pet,
-                        utils.formatEther(parseInt(log.data, 16).toString())
-                    ),
-                ],
-            });
-        }
-    });
+                const data = await graphClient.request(query.pet, variables);
+                const pet = data.pet;
 
-    const filterListed = {
-        address: '0xdfe8f54b894793bfbd2591033e7a307ed28a8d40',
-        topics: [
-            '0x187f616f90eaf716f9196a8f2eaead21fec5a107062159e6cc7e92b70ba9bca9',
-        ],
-    };
+                (
+                    client.channels.cache.get('953447957896761384') as TextChannel
+                ).send({
+                    embeds: [
+                        await printNinneko(
+                            pet,
+                            utils.formatEther(parseInt(log.data, 16).toString())
+                        ),
+                    ],
+                });
+            }
+        });
 
-    provider.on(filterListed, async (log, event) => {
-        if (log) {
-            const tokenId = log?.topics[1];
-            const variables = {
-                id: parseInt(tokenId, 16),
-            };
+        const filterListed = {
+            address: '0xdfe8f54b894793bfbd2591033e7a307ed28a8d40',
+            topics: [
+                '0x187f616f90eaf716f9196a8f2eaead21fec5a107062159e6cc7e92b70ba9bca9',
+            ],
+        };
 
-            const data = await graphClient.request(query.pet, variables);
-            const pet = data.pet;
+        provider.on(filterListed, async (log, event) => {
+            if (log) {
+                const tokenId = log?.topics[1];
+                const variables = {
+                    id: parseInt(tokenId, 16),
+                };
 
-            const ninneko = await printNinneko(
-                pet,
-                utils.formatEther(parseInt(log.data, 16).toString())
-            );
+                const data = await graphClient.request(query.pet, variables);
+                const pet = data.pet;
 
-            (
-                client.channels.cache.get('952338766511628378') as TextChannel
-            ).send({
-                embeds: [
-                    ninneko
-                ]
-            });
+                const ninneko = await printNinneko(
+                    pet,
+                    utils.formatEther(parseInt(log.data, 16).toString())
+                );
 
-            const snipes = await Snipe.findAll();
+                (
+                    client.channels.cache.get('952338766511628378') as TextChannel
+                ).send({
+                    embeds: [
+                        ninneko
+                    ]
+                });
 
-            for (const snipe of snipes) {
-                const user = await snipe.getUser();
-                if (user && user.isSubscribed()) {
-                    const member = await client.users.fetch(user.discordID);
-                    if (snipe.compareSnipeWithNinneko(pet)) {
-                        member?.send({
-                            embeds: [
-                                ninneko
-                            ]
-                        });
+                const snipes = await Snipe.findAll();
+
+                for (const snipe of snipes) {
+                    const user = await snipe.getUser();
+                    if (user && user.isSubscribed()) {
+                        const member = await client.users.fetch(user.discordID);
+                        if (snipe.compareSnipeWithNinneko(pet)) {
+                            member?.send({
+                                embeds: [
+                                    ninneko
+                                ]
+                            });
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 
     client.on('interactionCreate', async (interaction) => {
         if (!interaction.isCommand()) return;
@@ -129,21 +130,19 @@ async function main() {
             if (commandName === 'ping') {
                 await interaction.reply('Pong!');
             } else if (commandName === 'subscribe') {
-                await interaction.reply('Already Subscribed');
+                await interaction.reply({ content: 'Already Subscribed', ephemeral: true });
             } else if (commandName === 'snipe') {
                 await sniper.add(user, interaction);
             } else if (commandName === 'snipecheck') {
-                await sniper.check();
+                await sniper.check(user, interaction);
             } else if (commandName === 'sniperemove') {
-                await sniper.remove();
+                await sniper.remove(user, interaction);
             }
         } else {
             if (commandName === 'subscribe') {
                 await subscription.subscribe(user, interaction);
             } else {
-                await interaction.reply(
-                    'Please, subscribe to use this command'
-                );
+                await interaction.reply({ content: 'Please, subscribe to use this command', ephemeral: true });
             }
         }
     });
@@ -170,11 +169,8 @@ async function main() {
             // Parts: weapon, tail, eye, hat, ear, mouth
             else if (command === 'search') {
                 message.reply(await search(args, graphClient));
-            } else if (command === 'breed') {
-                breed(args);
             } else if (command === 'simple') {
                 message.reply(await simpleSearch(args, graphClient));
-            } else if (command === 'snipe') {
             }
         } else {
             if (command === 'subscribe') {

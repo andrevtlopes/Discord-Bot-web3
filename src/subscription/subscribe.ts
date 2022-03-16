@@ -4,8 +4,8 @@ import add from './add';
 
 export default async function subscribe(user: User | null, interaction: CommandInteraction) {
     try {        
-        const publicAddress = interaction.options.getString('bep20address');
-        const txID = interaction.options.getString('transactionid');
+        const publicAddress = interaction.options.getString('bep20address')?.toLowerCase();
+        const txID = interaction.options.getString('transactionid')?.toLowerCase();
 
         if (!user && txID && publicAddress) {
             if (interaction.member) {
@@ -14,15 +14,15 @@ export default async function subscribe(user: User | null, interaction: CommandI
         }
         if (user && txID) {
             if (await add(user, txID)) {
-                await interaction.reply('Subscribed until next week');
+                await interaction.reply({ content: 'Subscribed until next week', ephemeral: true });
             }
         }
         else {
-            await interaction.reply('Something went wrong, try again or send a ticket');
+            await interaction.reply({ content: 'Something went wrong, try again or send a ticket', ephemeral: true });
         }
     } catch (e: any) {
         if (e.message) {
-            interaction.reply(e.message);
+            await interaction.reply({ content: e.message, ephemeral: true });
         } else {
             console.log(e);
         }

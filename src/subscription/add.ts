@@ -40,16 +40,4 @@ export default async function add(user: User, txID: string): Promise<boolean> {
     }
 
     return false;
-    
-    // const busd = ERC20('0xe9e7cea3dedca5984780bafc599bd69add087d56');
-    // const logs = await busd.queryFilter(
-    //     busd.filters.Transfer(
-    //         user.publicAddress,
-    //         process.env.SUBSCRIPTION_ADDRESS
-    //     ),
-    //     -10,
-    //     'latest'
-    // );
-
-    // console.log(logs);
 }

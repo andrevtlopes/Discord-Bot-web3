@@ -4,7 +4,6 @@ import 'dotenv/config';
 import Discord, { TextChannel } from 'discord.js';
 import { GraphQLClient, gql } from 'graphql-request';
 import search from './search';
-import simpleSearch from './simpleSearch';
 import { utils } from 'ethers';
 import query from './query/index';
 import provider from './utils/provider';
@@ -129,6 +128,8 @@ async function main() {
         if (user?.isSubscribed()) {
             if (commandName === 'ping') {
                 await interaction.reply('Pong!');
+            } else if (commandName === 'search') {
+                await search.simple(graphClient, interaction);
             } else if (commandName === 'subscribe') {
                 await interaction.reply({ content: 'Already Subscribed', ephemeral: true });
             } else if (commandName === 'snipe') {
@@ -147,36 +148,36 @@ async function main() {
         }
     });
 
-    client.on('messageCreate', async function (message) {
-        if (message.author.bot) return;
-        if (!message.content.startsWith(prefix)) return;
+    // client.on('messageCreate', async function (message) {
+    //     if (message.author.bot) return;
+    //     if (!message.content.startsWith(prefix)) return;
 
-        const commandBody = message.content.slice(prefix.length);
-        const args = commandBody.split('@');
-        const command = args?.shift()?.toLowerCase();
+    //     const commandBody = message.content.slice(prefix.length);
+    //     const args = commandBody.split('@');
+    //     const command = args?.shift()?.toLowerCase();
 
-        let user = await User.findOne({
-            where: { discordID: message.author.id },
-        });
-        if (user?.isSubscribed()) {
-            if (command === 'ping') {
-                const timeTaken = Date.now() - message.createdTimestamp;
-                message.reply(
-                    `Pong! This message had a latency of ${timeTaken}ms.`
-                );
-            }
-            // search@Faction:Class:Breed:LifeStage:Parts:Sort,
-            // Parts: weapon, tail, eye, hat, ear, mouth
-            else if (command === 'search') {
-                message.reply(await search(args, graphClient));
-            } else if (command === 'simple') {
-                message.reply(await simpleSearch(args, graphClient));
-            }
-        } else {
-            if (command === 'subscribe') {
-            }
-        }
-    });
+    //     let user = await User.findOne({
+    //         where: { discordID: message.author.id },
+    //     });
+    //     if (user?.isSubscribed()) {
+    //         if (command === 'ping') {
+    //             const timeTaken = Date.now() - message.createdTimestamp;
+    //             message.reply(
+    //                 `Pong! This message had a latency of ${timeTaken}ms.`
+    //             );
+    //         }
+    //         // search@Faction:Class:Breed:LifeStage:Parts:Sort,
+    //         // Parts: weapon, tail, eye, hat, ear, mouth
+    //         else if (command === 'search') {
+    //             message.reply(await search(args, graphClient));
+    //         } else if (command === 'simple') {
+    //             message.reply(await simpleSearch(args, graphClient));
+    //         }
+    //     } else {
+    //         if (command === 'subscribe') {
+    //         }
+    //     }
+    // });
 
     // Create new tables
     await sequelize.sync();

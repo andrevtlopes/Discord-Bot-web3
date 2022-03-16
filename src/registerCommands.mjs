@@ -124,7 +124,7 @@ const commands = [
                 .setName('lifestage')
                 .setDescription('Life Stage of Ninnekos (Adult or New Born)')
                 .setRequired(false)
-                .setChoices([['Adult', 'adult'], ['New Born', 'newborn']])
+                .setChoices([['Adult', 'adult'], ['New Born', 'new born']])
         )
         .addStringOption((option) =>
             option

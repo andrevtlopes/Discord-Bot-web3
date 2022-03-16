@@ -1,15 +1,12 @@
 import query from './query.js';
 import {
     factions,
-    types,
-    classes,
-    partTypes,
     parts,
-    lifeStages,
     partArray,
 } from './parts.js';
 import { utils } from 'ethers';
 import { AsciiTable3, AlignmentEnum } from 'ascii-table3';
+import WrongItemError from './WrongItemError';
 
 export const  queryNinnekos = async ({
     faction = null,
@@ -19,18 +16,11 @@ export const  queryNinnekos = async ({
     parts,
     sort = null,
 }, graphClient) => {
-    if (!breed) {
+    if (breed === null || breed < 0 || breed > 6) {
         breed = [0, 1, 2, 3, 4, 5, 6];
     } else {
-        breed = [parseInt(breed)];
+        breed = [breed];
     }
-
-    const weapon = getPartsNumber(parts.shift(), partTypes.weapon);
-    const tail = getPartsNumber(parts.shift(), partTypes.tail);
-    const eye = getPartsNumber(parts.shift(), partTypes.eye);
-    const hat = getPartsNumber(parts.shift(), partTypes.hat);
-    const ear = getPartsNumber(parts.shift(), partTypes.ear);
-    const mouth = getPartsNumber(parts.shift(), partTypes.mouth);
 
     let sortPrice = null;
     let priceSetAt = true;
@@ -42,39 +32,30 @@ export const  queryNinnekos = async ({
         sortID = null;
     }
 
+    let lifeStageId = null;
+    if (lifeStage?.toLowerCase() === 'new born') {
+        lifeStageId = 0;
+    } else if (lifeStage?.toLowerCase() === 'adult') {
+        lifeStageId = 1;
+    }
+
     const variables = {
         page: 0,
-        lifeStage,
+        lifeStage: lifeStageId,
         limit: 1000,
         forSale: 1,
         breedCount: breed,
         faction,
         class: clazz,
-        handD: weapon[0],
-        handR: weapon[1],
-        handR1: weapon[2],
-        tailD: tail[0],
-        tailR: tail[1],
-        tailR1: tail[2],
-        eyesD: eye[0],
-        eyesR: eye[1],
-        eyesR1: eye[2],
-        hairD: hat[0],
-        hairR: hat[1],
-        hairR1: hat[2],
-        earsD: ear[0],
-        earsR: ear[1],
-        earsR1: ear[2],
-        mouthD: mouth[0],
-        mouthR: mouth[1],
-        mouthR1: mouth[2],
+        ...parts,
         sortID,
         sortPrice,
         priceSetAt,
     };
+    
+    console.log(variables);
 
     const data = await graphClient.request(query, variables);
-    // console.log(JSON.stringify(data, undefined, 2));
 
     const table = new AsciiTable3()
         .setHeading('BNB', 'FACTION', 'ID', 'B', 'Age', 'H1H2 Weapon', 'H1H2')
@@ -229,9 +210,16 @@ export function getPartsNumber(part, partType) {
     return rets;
 }
 
-export function getPartNumber(part) {
-    return Object.keys(parts).find(
-        (key) =>
-            parts[key].name.toLowerCase() === part?.toLowerCase()
-    ) ?? null;
+export function getPartNumber(part, partId) {
+    if (part !== null) {
+        const id =  Object.keys(parts).find(
+            (key) => parts[key].name?.toLowerCase() === part?.toLowerCase()
+        );
+        if (!id || partId !== parts[id].part) {
+            throw new WrongItemError(part);
+        }
+        return id;
+    } else {
+        return null;
+    }
 }

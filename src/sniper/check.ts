@@ -4,7 +4,7 @@ import User from '../models/user.model';
 
 export default async function check(user: User, interaction: CommandInteraction): Promise<void> {
     try {
-        await checkSnipe(user, )
+        await interaction.reply({ content: await checkSnipe(user), ephemeral: true });
     } catch (e: any) {
         if (e.message) {
             await interaction.reply({ content: e.message, ephemeral: true });

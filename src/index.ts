@@ -130,8 +130,13 @@ async function main() {
                 where: { discordID: msg.author.id || '' },
             });
             let availableCommands = {
-                '/subscribe': [ 'wallet', 'buy' ],
-                '\nIf you need help:': '',
+                'This is a private bot that need to be bought.': '',
+                '\nTo buy the bot please type:': '',
+                '/subscribe': ['wallet'],
+                '\nAfter linking your wallet to the bot you can:': '',
+                '/subscribe ': ['buy'],
+                '\nTo buy acess to the bot.': '',
+                '\nFor more help type:': '',
                 '/help': ''
             };
 
@@ -141,7 +146,7 @@ async function main() {
                     '/search': '',
                     '/snipe': ['add', 'remove', 'info'],
                     '/price_check': '',
-                    '\nIf you want a list of parts to use with search you can try:':
+                    '\nIf you are in doubt about the ninneko parts you can check here:':
                        '',
                     '/show': [ 'weapons', 'eyes', 'hats', 'tails' ],
                     '\nIf you need help:': '',
@@ -162,7 +167,8 @@ async function main() {
             }
 
             msg.channel.send(
-                'Available commands:\n```' + commands.join('\n') + '```'
+                'Available commands:\n```' + commands.join('\n') + '```' + 
+                'To see how to use this functions, please go to your discord in <#954038774860492860>\n/search\n/price_check\n/snipe\n/time_check'
             );
         }
 

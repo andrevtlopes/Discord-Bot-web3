@@ -1,7 +1,15 @@
 const helpUnsubscribe =
     "HOW TO SUBSCRIBE?\
-\nSend 20 BUSD to 0xa24d8b3637e112489B0C956eEe2Cd8bEc826d6FF and copy the transaction hash!\
-\nThen use these commands: \
+\nFirst, send 20 BUSD to this wallet:\
+\n0xa24d8b3637e112489B0C956eEe2Cd8bEc826d6FF\
+\n\
+\nSecond, copy the transaction hash from the 20 BUSD transaction.\
+\n\
+\nThird, type /subscribe wallet (insert here your wallet)\
+\n\
+\nFourth, type /subscribe buy (insert here the transaction hash)\
+\n\
+\nAnd its done, your acess is granted to the bot.\
 \n\
 \n/subscribe wallet [bep20_address]     <- Link your bep-20 wallet to your discord user\
 \n                                      (only need to do one time) \

@@ -1,6 +1,7 @@
 import { GraphQLClient } from 'graphql-request';
 import Ninneko from '../models/ninneko.model';
 import query from '../query/index';
+import '../db';
 
 export default async function insertDB(
     pet: any,
@@ -24,5 +25,5 @@ export default async function insertDB(
             }
         }
     }
-    Ninneko.upsert({ ...pet, ...sold });
+    await Ninneko.upsert({ ...pet, ...sold });
 }

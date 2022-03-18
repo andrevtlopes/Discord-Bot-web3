@@ -29,7 +29,7 @@ export default async function listed(graphClient: GraphQLClient, client: Client)
                 utils.formatEther(parseInt(log.data, 16).toString())
             );
 
-            await (
+            (
                 client.channels.cache.get('952338766511628378') as TextChannel
             ).send({
                 embeds: [

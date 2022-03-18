@@ -21,7 +21,7 @@ export default async function add(graphClient: GraphQLClient) {
         if (data.pets.length === 0) break;
 
         for (const pet of data.pets) {
-            ninnekos.insertDB(data.pets, graphClient, null, null);
+            ninnekos.insertDB(pet, graphClient, null, null);
         }
     }
     

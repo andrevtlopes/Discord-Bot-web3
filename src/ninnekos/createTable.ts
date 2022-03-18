@@ -1,5 +1,5 @@
 import { GraphQLClient } from 'graphql-request';
-import ninnekos from '.';
+import add from './add';
 
 (async () => {
     const endpoint = 'https://api.ninneko.com/graphql';
@@ -9,7 +9,7 @@ import ninnekos from '.';
     try {
         console.log('Started refreshing ninnekos on DB.');
 
-        await ninnekos.add(graphClient);
+        await add(graphClient);
         
 
         console.log('Successfully refreshed ninnekos on DB.');

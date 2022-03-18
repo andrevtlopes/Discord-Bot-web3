@@ -15,10 +15,10 @@ import ninnekos from './ninnekos';
 
 async function main() {
     let disableRecently = false;
-    // if (process.env.NODE_ENV !== 'production') {
-    //     disableRecently = true;
-    //     console.log('Recently disabled!');
-    // }
+    if (process.env.NODE_ENV !== 'production') {
+        disableRecently = true;
+        console.log('Recently disabled!');
+    }
     const client = new Discord.Client({
         intents: [
             'GUILDS',
@@ -40,8 +40,8 @@ async function main() {
     });
 
     if (!disableRecently) {
-        recently.listed(graphClient, client);
-        recently.sold(graphClient, client);
+        await recently.listed(graphClient, client);
+        await recently.sold(graphClient, client);
     }
 
     client.on('interactionCreate', async (interaction) => {

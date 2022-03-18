@@ -22,12 +22,14 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
                 id: parseInt(tokenId, 16),
             };
 
-            const timestamp = (await provider.getBlock(log.blockHash)).timestamp;
+            // const timestamp = (await provider.getBlock(log.blockHash)).timestamp;
+            const now = new Date();
+
 
             const data = await graphClient.request(query.pet, variables);
             const pet = data.pet;
 
-            await ninnekos.insertDB(data.pet, graphClient, null, null, parseInt(log.data, 16), new Date(timestamp));
+            await ninnekos.insertDB(data.pet, graphClient, null, null, parseInt(log.data, 16), now);
 
             let channel = client.channels.cache.get('952338766511628378') as TextChannel;
             if (!channel) {

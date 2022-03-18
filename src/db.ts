@@ -166,6 +166,14 @@ Ninneko.init(
 		soldPrice: {
 			type: BIGINT,
 			allowNull: true,
+		},
+		listedAt: {
+			type: DATE,
+			allowNull: true,
+		},
+		listedPrice: {
+			type: BIGINT,
+			allowNull: true,
 		}
 	},
 	{

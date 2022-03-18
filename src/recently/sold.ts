@@ -24,7 +24,7 @@ export default function sold(graphClient: GraphQLClient, client: Client) {
 
             const data = await graphClient.request(query.pet, variables);
 
-            await ninnekos.insertDB(data.pet, graphClient, parseInt(log.data, 16), now);
+            await ninnekos.insertDB(data.pet, graphClient, parseInt(log.data, 16), now, null, null);
            
             let channel = client.channels.cache.get('953447957896761384') as TextChannel;
             if (!channel) {

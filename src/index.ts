@@ -168,7 +168,7 @@ async function main() {
 
             msg.channel.send(
                 'Available commands:\n```' + commands.join('\n') + '```' + 
-                'To see how to use this functions, please go to your discord in <#954038774860492860>\n/search\n/price_check\n/snipe\n/time_check'
+                'To see how to use this functions, please go to <#954038774860492860>'
             );
         }
 

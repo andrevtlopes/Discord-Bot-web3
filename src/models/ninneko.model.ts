@@ -29,6 +29,8 @@ export default class Ninneko extends Model<InferAttributes<Ninneko>, InferCreati
     declare tailD: number;
     declare tailR: number;
     declare tailR1: number;
-    declare soldAt: CreationOptional<string>;
+    declare soldAt: CreationOptional<Date>;
     declare soldPrice: CreationOptional<number>;
+    declare listedAt: CreationOptional<Date>;
+    declare listedPrice: CreationOptional<number>;
 }

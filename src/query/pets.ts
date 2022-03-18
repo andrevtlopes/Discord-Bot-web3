@@ -4,6 +4,7 @@ const pets = gql`
     fragment PetFields on Pet {
         id
         createdAt
+        updatedAt
         forSale
         price
         name

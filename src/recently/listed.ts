@@ -5,6 +5,7 @@ import query from '../query/index';
 import printNinneko from '../utils/printNinneko';
 import { utils } from 'ethers';
 import { Client, TextChannel } from 'discord.js';
+import ninnekos from '../ninnekos';
 
 export default function listed(graphClient: GraphQLClient, client: Client) {
     const filterListed = {
@@ -21,18 +22,22 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
                 id: parseInt(tokenId, 16),
             };
 
+            const now = new Date();
+
             const data = await graphClient.request(query.pet, variables);
             const pet = data.pet;
 
-            const ninneko = await printNinneko(
-                pet,
-                utils.formatEther(parseInt(log.data, 16).toString())
-            );
+            await ninnekos.insertDB(data.pet, graphClient, null, null, parseInt(log.data, 16), now);
 
             let channel = client.channels.cache.get('952338766511628378') as TextChannel;
             if (!channel) {
                 channel = await client.channels.fetch('952338766511628378') as TextChannel;
             }
+
+            const ninneko = await printNinneko(
+                pet,
+                utils.formatEther(parseInt(log.data, 16).toString())
+            );
 
             await channel.send({
                 embeds: [

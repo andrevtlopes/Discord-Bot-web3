@@ -36,6 +36,7 @@ const pet = gql`
             tailR1
             price
             createdAt
+            updatedAt
             forSale
             avatarURL
         }

@@ -1,5 +1,6 @@
 import { GraphQLClient } from 'graphql-request';
 import add from './add';
+import '../db';
 
 (async () => {
     const endpoint = 'https://api.ninneko.com/graphql';

@@ -34,6 +34,7 @@ const helpCommands = {
         'remove [name]': 'Remove snipe with determined name',
         info: 'Information about your snipes',
     },
+    '/price_check [[parts]] [breed]': 'Search for the last 10 sold ninnekos that matches the given parameters',
     '[[parts]]': '[weapon] [weapon_h1] [weapon_h2] [eye] [eye_h1] [eye_h2] [hat] [hat_h1] [hat_h2] [tail] [tail_h1] [tail_h2]',
     '[]': 'Everything that is in brackets are variables for slash commands',
     'If you want a list of parts to use with search you can try:': '',

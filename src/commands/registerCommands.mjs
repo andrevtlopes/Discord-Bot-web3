@@ -264,7 +264,7 @@ const commands = [
         new SlashCommandBuilder()
         .setName('price_check')
         .setDescription(
-            'Search for the last 10 sold ninnekos that matches the parameters'
+            'Search for the last 10 sold ninnekos that matches the given parameters'
         )
         .addIntegerOption((option) =>
             option

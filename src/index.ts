@@ -139,7 +139,8 @@ async function main() {
                 const newCommands = {
                     '/subscribe': [ 'info' ],
                     '/search': '',
-                    '/snipe': [ 'add', 'remove' ,'info' ],
+                    '/snipe': ['add', 'remove', 'info'],
+                    '/price_check': '',
                     '\nIf you want a list of parts to use with search you can try:':
                        '',
                     '/show': [ 'weapons', 'eyes', 'hats', 'tails' ],

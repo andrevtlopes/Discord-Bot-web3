@@ -5,7 +5,7 @@ import add from './add';
 
 export default async function changeWallet(user: User | null, interaction: CommandInteraction) {
     try {        
-        const publicAddress = interaction.options.getString('bep20_address')?.toLowerCase();
+        const publicAddress = interaction.options.getString('bep20_address');
 
         if (publicAddress && !utils.isAddress(publicAddress)) {
             await interaction.reply({ content: 'Please, send a valid BEP-20 Address', ephemeral: true });
@@ -14,14 +14,14 @@ export default async function changeWallet(user: User | null, interaction: Comma
         if (user?.publicAddress) {
             await interaction.reply({ content: 'Wallet already linked', ephemeral: true });
         } else {
-
             if (!user && publicAddress) {
                 if (interaction.user) {
                     user = await User.create({ publicAddress, discordID: interaction.user.id });
                 }
             } else if (user && publicAddress && !user.publicAddress) {
-                user.publicAddress = publicAddress;
+                user.publicAddress = publicAddress.toLowerCase();
                 user.save();
+                await interaction.reply({ content: `${publicAddress} linked to your user`, ephemeral: true });
             } else {
                 await interaction.reply({ content: 'Something went wrong, try again or send a ticket', ephemeral: true });
             }

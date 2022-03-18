@@ -10,6 +10,7 @@ import sniper from './sniper';
 import { sequelize } from './db';
 import recently from './recently';
 import messages from './utils/messages';
+import rolesTimeout from './utils/rolesTimeout';
 
 async function main() {
     let disableRecently = false;
@@ -27,6 +28,8 @@ async function main() {
         partials: ['CHANNEL'],
     });
     client.login(process.env.BOT_TOKEN);
+    await rolesTimeout(client);
+    console.log(new Date().getTime())
 
     const endpoint = 'https://api.ninneko.com/graphql';
 

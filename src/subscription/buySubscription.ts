@@ -1,32 +1,37 @@
-import { CommandInteraction } from 'discord.js';
+import { CommandInteraction, GuildMemberRoleManager, RoleResolvable } from 'discord.js';
 import User from '../models/user.model';
 import add from './add';
 
 export default async function buySubscription(user: User | null, interaction: CommandInteraction) {
     try {        
         const txID = interaction.options.getString('transaction_id')?.toLowerCase();
+        await interaction.reply({ content: 'Working on it!', ephemeral: true });
 
         if (!user?.publicAddress) {
-            await interaction.reply({ content: 'Please, link a Wallet Address', ephemeral: true });
+            await interaction.editReply({ content: 'Please, link a Wallet Address' });
         } else if (txID && await add(user, txID)) {
-            const role = interaction.options.getRole('Subscribed');
-            const member = interaction.options.getMember(user.discordID);
-            (member?.roles as any).add(role);
+            const guild = interaction.client.guilds.cache.get('951929724442132520');
+            const role = guild?.roles.cache.find(role => role.name === 'Subscribed');
+            const member = guild?.members.cache.find(member => member.id === user.discordID);
+            if (role && member) {
+                await (member?.roles as GuildMemberRoleManager).add(role as any);
+            }
 
             const now = new Date(); //creates date object at current time
-            const date = new Date(user.subscriptionDue); //create first state-changing time
 
-            //Execute task after (date - now) milliseconds
-            setTimeout(function(){
-                console.log('Role ended')
-            }, date.getMilliseconds() - now.getMilliseconds());
-            await interaction.reply({ content: 'Subscribed until next week', ephemeral: true });
+            await interaction.editReply({ content: 'Subscribed until next week' });
+
+            // Execute task after (date - now) milliseconds
+            setTimeout(async function(){
+                console.log('Role ended');
+                await (member?.roles as GuildMemberRoleManager).remove(role as any);
+            }, user.subscriptionDue.getTime() - now.getTime());
         } else {
-            await interaction.reply({ content: 'Something went wrong, try again or send a ticket', ephemeral: true });
+            await interaction.editReply({ content: 'Something went wrong, try again or send a ticket' });
         }
     } catch (e: any) {
         if (e.message) {
-            await interaction.reply({ content: e.message, ephemeral: true });
+            await interaction.editReply({ content: e.message });
         } else {
             console.log(e);
         }

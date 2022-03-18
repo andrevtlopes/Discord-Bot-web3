@@ -3,6 +3,7 @@ import ERC20 from '../utils/ERC20';
 import provider from '../utils/provider';
 import _ from 'lodash';
 import { utils } from 'ethers';
+import BotError from '../BotError';
 
 export default async function add(user: User, txID: string): Promise<boolean> {
     const tx = await provider.getTransaction(txID);
@@ -16,7 +17,7 @@ export default async function add(user: User, txID: string): Promise<boolean> {
     );
 
     if (txID === user.txID || receipt.confirmations > 201600) {
-        throw Error('This transaction was already used, try another');
+        throw new BotError('This transaction was already used, try another');
     }
 
     for (const log of receipt.logs) {
@@ -33,7 +34,7 @@ export default async function add(user: User, txID: string): Promise<boolean> {
                 return true;
             }
             else {
-                throw new Error('The value of BUSD is not right, please send the right amount and token (20 BUSD) or open a ticket');
+                throw new BotError('The value of BUSD is not right, please send the right amount and token (20 BUSD) or open a ticket');
             }
             
         }

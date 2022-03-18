@@ -1,7 +1,7 @@
 import './db';
 import 'dotenv/config';
 
-import Discord from 'discord.js';
+import Discord, { CommandInteraction } from 'discord.js';
 import { GraphQLClient } from 'graphql-request';
 import search from './search';
 import subscription from './subscription';
@@ -12,6 +12,9 @@ import recently from './recently';
 import messages from './utils/messages';
 import rolesTimeout from './utils/rolesTimeout';
 import ninnekos from './ninnekos';
+import BotError from './BotError';
+import isUserDM from './utils/isUserDM';
+import { partTypes } from './parts';
 
 async function main() {
     let disableRecently = false;
@@ -46,79 +49,81 @@ async function main() {
 
     client.on('interactionCreate', async (interaction) => {
         if (!interaction.isCommand()) return;
+        
+        try {
+            await isUserDM(interaction);
 
-        const user = await User.findOne({
-            where: { discordID: interaction.user.id || '' },
-        });
+            const user = await User.findOne({
+                where: { discordID: interaction.user.id || '' },
+            });
 
-        const { commandName } = interaction;
+            const { commandName } = interaction;
 
-        if (user?.isSubscribed()) {
-            if (commandName === 'ping') {
-                await interaction.reply('Pong!');
-            } else if (commandName === 'search') {
-                await search.simple(graphClient, interaction);
-            } else if (commandName === 'subscribe') {
-                const subCommand = interaction.options.getSubcommand();
-                if (subCommand === 'info') {
-                    // TODO: subscribe info
-                    await interaction.reply({
-                        content: `\`\`\`Not Implemented\`\`\``,
-                        ephemeral: true,
+            if (user?.isSubscribed()) {
+                if (commandName === 'ping') {
+                    await interaction.editReply('Pong!');
+                } else if (commandName === 'search') {
+                    await search.simple(graphClient, interaction);
+                } else if (commandName === 'subscribe') {
+                    const subCommand = interaction.options.getSubcommand();
+                    if (subCommand === 'info') {
+                        // TODO: subscribe info
+                        await interaction.editReply({
+                            content: `\`\`\`Not Implemented\`\`\``,
+                        });
+                    } else {
+                        await interaction.editReply({
+                            content: 'Already Subscribed',
+                        });
+                    }
+                } else if (commandName === 'snipe') {
+                    const subCommand = interaction.options.getSubcommand();
+                    if (subCommand === 'add') {
+                        await sniper.add(user, interaction);
+                    } else if (subCommand === 'remove') {
+                        await sniper.remove(user, interaction);
+                    } else if (subCommand === 'info') {
+                        await sniper.check(user, interaction);
+                    }
+                } else if (commandName === 'help') {
+                    await interaction.editReply({
+                        content: `\`\`\`${messages.helpSubscribed}\`\`\``,
+                    });
+                } else if (commandName === 'show') {
+                    const subCommand = interaction.options.getSubcommand();
+                    const part = subCommand.slice(0, -1);
+                    await ninnekos.showParts((partTypes as any)[part], interaction);
+                } else if (commandName === 'price_check') {
+                    await ninnekos.priceCheck(interaction);
+                }
+            } else {
+                if (commandName === 'subscribe') {
+                    const subCommand = interaction.options.getSubcommand();
+                    if (subCommand === 'buy') {
+                        await subscription.buySubscription(user, interaction);
+                    } else if (subCommand === 'wallet') {
+                        await subscription.changeWallet(user, interaction);
+                    } else if (subCommand === 'info') {
+                        await subscription.info(user, interaction);
+                    }
+                } else if (commandName === 'help') {
+                    await interaction.editReply({
+                        content: `\`\`\`${messages.helpUnsubscribe}\`\`\``,
                     });
                 } else {
-                    await interaction.reply({
-                        content: 'Already Subscribed',
-                        ephemeral: true,
-                    });
+                    await interaction.editReply('Please, subscribe to use this command');
                 }
-            } else if (commandName === 'snipe') {
-                const subCommand = interaction.options.getSubcommand();
-                if (subCommand === 'add') {
-                    await sniper.add(user, interaction);
-                } else if (subCommand === 'remove') {
-                    await sniper.remove(user, interaction);
-                } else if (subCommand === 'info') {
-                    await sniper.check(user, interaction);
-                }
-            } else if (commandName === 'help') {
-                await interaction.reply({
-                    content: `\`\`\`${messages.helpSubscribed}\`\`\``,
-                    ephemeral: true,
-                });
-            } else if (commandName === 'show') {
-                // TODO: Implement show functions
-                await interaction.reply({
-                    content: `\`\`\`Not Implemented\`\`\``,
-                    ephemeral: true,
-                });
-            } else if (commandName === 'price_check') {
-                await ninnekos.priceCheck(interaction);
             }
-        } else {
-            if (commandName === 'subscribe') {
-                const subCommand = interaction.options.getSubcommand();
-                if (subCommand === 'buy') {
-                    await subscription.buySubscription(user, interaction);
-                } else if (subCommand === 'wallet') {
-                    await subscription.changeWallet(user, interaction);
-                } else if (subCommand === 'info') {
-                    // TODO: subscribe info
-                    await interaction.reply({
-                        content: `\`\`\`Not Implemented\`\`\``,
-                        ephemeral: true,
-                    });
-                }
-            } else if (commandName === 'help') {
-                await interaction.reply({
-                    content: `\`\`\`${messages.helpUnsubscribe}\`\`\``,
-                    ephemeral: true,
-                });
+        } catch (e: any) {
+            if (e instanceof BotError) {
+                await interaction.editReply({ content: e.message });
             } else {
-                await interaction.reply({
-                    content: 'Please, subscribe to use this command',
-                    ephemeral: true,
-                });
+                await interaction.followUp('Something went wrong, try again or send a help ticket. <#954042095348375572>')
+            }
+            if (e?.message) {
+                console.log(e.message);
+            } else {
+                console.error(e);
             }
         }
     });

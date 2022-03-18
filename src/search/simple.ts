@@ -7,33 +7,24 @@ export default async function simple(
     graphClient: GraphQLClient,
     interaction: CommandInteraction
 ): Promise<void> {
-    try {
-        let parts = {};
-        for (const part of partialParts) {
-            const id = getPartNumber(
-                interaction.options.getString(part.discordName),
-                part.partId
-            );
-            parts = {
-                ...parts,
-                [part.name]: id === null ? null : [id],
-            };
-        }
-
-        const breed = interaction.options.getInteger('breed');
-        const lifeStage = interaction.options.getString('lifestage');
-
-        await interaction.reply({
-            content: await simpleSearch(graphClient, parts, breed, lifeStage),
-            ephemeral: true,
-        });
-    } catch (e: any) {
-        if (e.message) {
-            await interaction.reply({ content: e.message, ephemeral: true });
-        } else {
-            console.log(e);
-        }
+    let parts = {};
+    for (const part of partialParts) {
+        const id = getPartNumber(
+            interaction.options.getString(part.discordName),
+            part.partId
+        );
+        parts = {
+            ...parts,
+            [part.name]: id === null ? null : [id],
+        };
     }
+
+    const breed = interaction.options.getInteger('breed');
+    const lifeStage = interaction.options.getString('lifestage');
+
+    await interaction.editReply({
+        content: await simpleSearch(graphClient, parts, breed, lifeStage),
+    });
 }
 
 const simpleSearch = async (

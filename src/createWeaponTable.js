@@ -12,7 +12,6 @@ import { AsciiTable3, AlignmentEnum } from 'ascii-table3';
 import { generate } from 'csv-generate';
 
 export default async function createWeaponTable(graphClient) {
-    // try {
     const weapons = Object.values(parts).filter(
         (part) => part.part === partTypes['weapon']
     );
@@ -58,10 +57,6 @@ export default async function createWeaponTable(graphClient) {
     }
 
     console.log(records.map((e) => e.join(',')).join('\n'));
-
-    // } catch(e) {
-
-    // }
 }
 
 export function getDays(createdAt) {

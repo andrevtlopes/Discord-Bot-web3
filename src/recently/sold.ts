@@ -25,7 +25,7 @@ export default async function sold(graphClient: GraphQLClient, client: Client) {
             const data = await graphClient.request(query.pet, variables);
            
 
-            await (
+            (
                 client.channels.cache.get('953447957896761384') as TextChannel
             ).send({
                 embeds: [

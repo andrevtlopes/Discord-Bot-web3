@@ -5,6 +5,7 @@ import printNinneko from '../utils/printNinneko';
 import { utils } from 'ethers';
 import { Client, TextChannel } from 'discord.js';
 import ninnekos from '../ninnekos';
+import { Log } from '@ethersproject/abstract-provider';
 
 export default function sold(graphClient: GraphQLClient, client: Client) {
     const filterSold = {
@@ -14,17 +15,17 @@ export default function sold(graphClient: GraphQLClient, client: Client) {
         ],
     };
 
-    provider.on(filterSold, async (log, event) => {
+    provider.on(filterSold, async (log: Log, event) => {
         if (log) {
             const tokenId = log?.topics[1];
             const variables = {
                 id: parseInt(tokenId, 16),
             };
-            const now = new Date(); 
+            const timestamp = (await provider.getBlock(log.blockHash)).timestamp;
 
             const data = await graphClient.request(query.pet, variables);
 
-            await ninnekos.insertDB(data.pet, graphClient, parseInt(log.data, 16), now, null, null);
+            await ninnekos.insertDB(data.pet, graphClient, parseInt(log.data, 16), new Date(timestamp), null, null);
            
             let channel = client.channels.cache.get('953447957896761384') as TextChannel;
             if (!channel) {

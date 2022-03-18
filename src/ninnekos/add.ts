@@ -14,7 +14,7 @@ export default async function add(graphClient: GraphQLClient) {
     let page = 0;
     while (true) {
         const data = await graphClient.request(query.pets, { ...variables, page });
-        console.log('Pet Length: ' + data.pets.length, + ' Page: ' + page);
+        console.log(`Pet Length: ${data.pets.length}, Page: ${page}`);
         
         page = page + 1;
 

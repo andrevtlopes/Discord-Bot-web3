@@ -26,7 +26,7 @@ export default async function insertDB(
 
         for (const s of history.saleHistory) {
             soldAt = new Date(s.createdAt);
-            if (recently.soldAt === null) {
+            if (!recently?.soldAt) {
                 recently = { soldAt, soldPrice: s.price };
             } else if (soldAt.getTime() > recently.soldAt.getTime()) {
                 recently = { soldAt, soldPrice: s.price };

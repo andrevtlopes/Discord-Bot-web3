@@ -40,8 +40,8 @@ async function main() {
     });
 
     if (!disableRecently) {
-        await recently.listed(graphClient, client);
-        await recently.sold(graphClient, client);
+        recently.listed(graphClient, client);
+        recently.sold(graphClient, client);
     }
 
     client.on('interactionCreate', async (interaction) => {

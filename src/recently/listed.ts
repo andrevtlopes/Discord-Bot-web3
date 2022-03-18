@@ -6,7 +6,7 @@ import printNinneko from '../utils/printNinneko';
 import { utils } from 'ethers';
 import { Client, TextChannel } from 'discord.js';
 
-export default async function listed(graphClient: GraphQLClient, client: Client) {
+export default function listed(graphClient: GraphQLClient, client: Client) {
     const filterListed = {
         address: '0xdfe8f54b894793bfbd2591033e7a307ed28a8d40',
         topics: [

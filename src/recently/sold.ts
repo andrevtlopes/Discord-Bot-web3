@@ -6,7 +6,7 @@ import { utils } from 'ethers';
 import { Client, TextChannel } from 'discord.js';
 import ninnekos from '../ninnekos';
 
-export default async function sold(graphClient: GraphQLClient, client: Client) {
+export default function sold(graphClient: GraphQLClient, client: Client) {
     const filterSold = {
         address: '0xdfe8f54b894793bfbd2591033e7a307ed28a8d40',
         topics: [

@@ -23,11 +23,15 @@ export default async function sold(graphClient: GraphQLClient, client: Client) {
             const now = new Date(); 
 
             const data = await graphClient.request(query.pet, variables);
-           
 
-            (
-                client.channels.cache.get('953447957896761384') as TextChannel
-            ).send({
+            await ninnekos.insertDB(data.pet, graphClient, parseInt(log.data, 16), now);
+           
+            let channel = client.channels.cache.get('953447957896761384') as TextChannel;
+            if (!channel) {
+                channel = await client.channels.fetch('953447957896761384') as TextChannel;
+            }
+
+            await channel.send({
                 embeds: [
                     await printNinneko(
                         data.pet,
@@ -35,8 +39,6 @@ export default async function sold(graphClient: GraphQLClient, client: Client) {
                     ),
                 ],
             });
-
-            await ninnekos.insertDB(data.pet, graphClient, parseInt(log.data, 16), now);
         }
     });
 }

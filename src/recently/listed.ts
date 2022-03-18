@@ -29,9 +29,12 @@ export default async function listed(graphClient: GraphQLClient, client: Client)
                 utils.formatEther(parseInt(log.data, 16).toString())
             );
 
-            (
-                client.channels.cache.get('952338766511628378') as TextChannel
-            ).send({
+            let channel = client.channels.cache.get('952338766511628378') as TextChannel;
+            if (!channel) {
+                channel = await client.channels.fetch('952338766511628378') as TextChannel;
+            }
+
+            await channel.send({
                 embeds: [
                     ninneko
                 ]

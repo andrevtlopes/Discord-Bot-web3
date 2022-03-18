@@ -1,4 +1,5 @@
 import add from './add';
-import subscribe from './subscribe';             
+import buySubscription from './buySubscription';  
+import changeWallet from './changeWallet';           
 
-export default { add, subscribe };
+export default { add, changeWallet, buySubscription };

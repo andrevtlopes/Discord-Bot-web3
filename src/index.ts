@@ -1,30 +1,32 @@
 import './db';
 import 'dotenv/config';
 
-import Discord, { TextChannel } from 'discord.js';
-import { GraphQLClient, gql } from 'graphql-request';
+import Discord from 'discord.js';
+import { GraphQLClient } from 'graphql-request';
 import search from './search';
-import { utils } from 'ethers';
-import query from './query/index';
-import provider from './utils/provider';
 import subscription from './subscription';
 import User from './models/user.model';
 import sniper from './sniper';
-import printNinneko from './utils/printNinneko';
 import { sequelize } from './db';
-import Snipe from './models/snipe.model';
+import recently from './recently';
+import messages from './utils/messages';
 
 async function main() {
     let disableRecently = false;
     if (process.env.NODE_ENV !== 'production') {
         disableRecently = true;
-        console.log('Recently disabled!')
+        console.log('Recently disabled!');
     }
     const client = new Discord.Client({
-        intents: ['GUILDS', 'GUILD_MESSAGES'],
+        intents: [
+            'GUILDS',
+            'GUILD_MESSAGES',
+            'DIRECT_MESSAGES',
+            'GUILD_PRESENCES',
+        ],
+        partials: ['CHANNEL'],
     });
     client.login(process.env.BOT_TOKEN);
-    const prefix = '!';
 
     const endpoint = 'https://api.ninneko.com/graphql';
 
@@ -32,95 +34,18 @@ async function main() {
 
     client.on('ready', async () => {
         console.log('Connected to discord bot');
-        // client.channels.cache.get('952338766511628378').send('Bot Started!');
     });
 
     if (!disableRecently) {
-
-        const filterSold = {
-            address: '0xdfe8f54b894793bfbd2591033e7a307ed28a8d40',
-            topics: [
-                '0x7bd0b0502f39fae4cc20b3da611aa9e529ffa26435779fe6f2068f197151d9d0',
-            ],
-        };
-
-        provider.on(filterSold, async (log, event) => {
-            if (log) {
-                const tokenId = log?.topics[1];
-                const variables = {
-                    id: parseInt(tokenId, 16),
-                };
-
-                const data = await graphClient.request(query.pet, variables);
-                const pet = data.pet;
-
-                (
-                    client.channels.cache.get('953447957896761384') as TextChannel
-                ).send({
-                    embeds: [
-                        await printNinneko(
-                            pet,
-                            utils.formatEther(parseInt(log.data, 16).toString())
-                        ),
-                    ],
-                });
-            }
-        });
-
-        const filterListed = {
-            address: '0xdfe8f54b894793bfbd2591033e7a307ed28a8d40',
-            topics: [
-                '0x187f616f90eaf716f9196a8f2eaead21fec5a107062159e6cc7e92b70ba9bca9',
-            ],
-        };
-
-        provider.on(filterListed, async (log, event) => {
-            if (log) {
-                const tokenId = log?.topics[1];
-                const variables = {
-                    id: parseInt(tokenId, 16),
-                };
-
-                const data = await graphClient.request(query.pet, variables);
-                const pet = data.pet;
-
-                const ninneko = await printNinneko(
-                    pet,
-                    utils.formatEther(parseInt(log.data, 16).toString())
-                );
-
-                (
-                    client.channels.cache.get('952338766511628378') as TextChannel
-                ).send({
-                    embeds: [
-                        ninneko
-                    ]
-                });
-
-                const snipes = await Snipe.findAll();
-
-                for (const snipe of snipes) {
-                    const user = await snipe.getUser();
-                    if (user && user.isSubscribed()) {
-                        const member = await client.users.fetch(user.discordID);
-                        if (snipe.compareSnipeWithNinneko(pet)) {
-                            member?.send({
-                                embeds: [
-                                    ninneko
-                                ]
-                            });
-                        }
-                    }
-                }
-            }
-        });
+        recently.listed(graphClient, client);
+        recently.sold(graphClient, client);
     }
 
     client.on('interactionCreate', async (interaction) => {
         if (!interaction.isCommand()) return;
 
         const user = await User.findOne({
-            where: { discordID: interaction.member?.user.id },
+            where: { discordID: interaction.user.id || '' },
         });
 
         const { commandName } = interaction;
@@ -131,21 +56,118 @@ async function main() {
             } else if (commandName === 'search') {
                 await search.simple(graphClient, interaction);
             } else if (commandName === 'subscribe') {
-                await interaction.reply({ content: 'Already Subscribed', ephemeral: true });
+                const subCommand = interaction.options.getSubcommand();
+                if (subCommand === 'info') {
+                    // TODO: subscribe info
+                    await interaction.reply({
+                        content: `\`\`\`Not Implemented\`\`\``,
+                        ephemeral: true,
+                    });
+                } else {
+                    await interaction.reply({
+                        content: 'Already Subscribed',
+                        ephemeral: true,
+                    });
+                }
             } else if (commandName === 'snipe') {
-                await sniper.add(user, interaction);
-            } else if (commandName === 'snipecheck') {
-                await sniper.check(user, interaction);
-            } else if (commandName === 'sniperemove') {
-                await sniper.remove(user, interaction);
+                const subCommand = interaction.options.getSubcommand();
+                if (subCommand === 'add') {
+                    await sniper.add(user, interaction);
+                } else if (subCommand === 'remove') {
+                    await sniper.remove(user, interaction);
+                } else if (subCommand === 'info') {
+                    await sniper.check(user, interaction);
+                }
+            } else if (commandName === 'help') {
+                await interaction.reply({
+                    content: `\`\`\`${messages.helpSubscribed}\`\`\``,
+                    ephemeral: true,
+                });
+            } else if (commandName === 'show') {
+                // TODO: Implement show functions
+                await interaction.reply({
+                    content: `\`\`\`Not Implemented\`\`\``,
+                    ephemeral: true,
+                });
             }
         } else {
             if (commandName === 'subscribe') {
-                await subscription.subscribe(user, interaction);
+                const subCommand = interaction.options.getSubcommand();
+                if (subCommand === 'buy') {
+                    await subscription.buySubscription(user, interaction);
+                } else if (subCommand === 'wallet') {
+                    await subscription.changeWallet(user, interaction);
+                } else if (subCommand === 'info') {
+                    // TODO: subscribe info
+                    await interaction.reply({
+                        content: `\`\`\`Not Implemented\`\`\``,
+                        ephemeral: true,
+                    });
+                }
+            } else if (commandName === 'help') {
+                await interaction.reply({
+                    content: `\`\`\`${messages.helpUnsubscribe}\`\`\``,
+                    ephemeral: true,
+                });
             } else {
-                await interaction.reply({ content: 'Please, subscribe to use this command', ephemeral: true });
+                await interaction.reply({
+                    content: 'Please, subscribe to use this command',
+                    ephemeral: true,
+                });
             }
         }
+    });
+
+    client.on('messageCreate', async (msg) => {
+        if (msg.author.bot) return;
+        if (msg.channel.type === 'DM') {
+            const user = await User.findOne({
+                where: { discordID: msg.author.id || '' },
+            });
+            let availableCommands = {
+                '/subscribe': [ 'wallet', 'buy' ],
+                '\nIf you need help:': '',
+                '/help': ''
+            };
+
+            if (user?.isSubscribed()) {
+                const newCommands = {
+                    '/subscribe': [ 'info' ],
+                    '/search': '',
+                    '/snipe': [ 'add', 'remove' ,'info' ],
+                    '\nIf you want a list of parts to use with search you can try:':
+                       '',
+                    '/show': [ 'weapons', 'eyes', 'hats', 'tails' ],
+                    '\nIf you need help:': '',
+                    '/help': ''
+                };
+                availableCommands = newCommands as any;
+            }
+
+            const commands = [];
+            for (const command of Object.keys(availableCommands)) {
+                if (typeof (availableCommands as any)[command] !== 'string') {
+                    for (const subCommand of (availableCommands as any)[command]) {
+                        commands.push(`${command} ${subCommand}`);
+                    }
+                } else {
+                    commands.push(`${command}`);
+                }
+            }
+
+            msg.channel.send(
+                'Available commands:\n```' + commands.join('\n') + '```'
+            );
+        }
+
+        // you can do anything you want here. In my case I put console.log() function.
+        // since you wanted user ID, you can use msg.author.id property here.
+
+        // }
+    });
+
+    client.on('guildMemberAdd', async (member) => {
+        member.send(`\`\`\`${messages.welcome}\`\`\``);
     });
 
     // client.on('messageCreate', async function (message) {

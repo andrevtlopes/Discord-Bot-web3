@@ -18,7 +18,6 @@ const parts_js_1 = require("./parts.js");
 const ethers_1 = require("ethers");
 function createWeaponTable(graphClient) {
     return __awaiter(this, void 0, void 0, function* () {
-        // try {
         const weapons = Object.values(parts_js_1.parts).filter((part) => part.part === parts_js_1.partTypes['weapon']);
         const records = [
             ['Name', 'New Born', 'New Born 4d', 'New Born 5d', 'Adult'],
@@ -29,14 +28,12 @@ function createWeaponTable(graphClient) {
                 forSale: 1,
                 breedCount: [0],
                 handD: [weapon.id],
-                // handD: [18], // Angel for testing
                 sortPrice: false,
             };
             let newBorns = yield graphClient.request(query_js_1.default, Object.assign(Object.assign({}, variables), { lifeStage: 1, limit: 100 }));
             let adults = yield graphClient.request(query_js_1.default, Object.assign(Object.assign({}, variables), { lifeStage: 2, limit: 1 }));
             newBorns = newBorns.pets;
             adults = adults.pets;
-            // console.log(adults);
             const nb4d = newBorns.find((nb) => getDays(nb.createdAt) >= 4 && getDays(nb.createdAt) < 5);
             const nb5d = newBorns.find((nb) => getDays(nb.createdAt) >= 5);
             records.push([
@@ -48,16 +45,12 @@ function createWeaponTable(graphClient) {
             ]);
         }
         console.log(records.map((e) => e.join(',')).join('\n'));
-        // } catch(e) {
-        // }
     });
 }
 exports.default = createWeaponTable;
 function getDays(createdAt) {
     const createdDate = new Date(createdAt);
-    // get total seconds between the times
     let delta = Math.abs(Date.now() - createdDate) / 1000;
-    // calculate (and subtract) whole days
     const days = Math.floor(delta / 86400);
     return days;
 }

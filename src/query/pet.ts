@@ -12,6 +12,7 @@ const pet = gql`
                 ethAddr
                 __typename
             }
+            factionColor
             breedCount
             generation
             faction

@@ -158,6 +158,14 @@ Ninneko.init(
 		tailR1: {
 			type: INTEGER.UNSIGNED,
 			allowNull: false,
+		},
+		soldAt: {
+			type: DATE,
+			allowNull: true,
+		},
+		soldPrice: {
+			type: BIGINT,
+			allowNull: true,
 		}
 	},
 	{
@@ -218,5 +226,7 @@ Snipe.init(
 Ninneko.hasMany(SaleHistory);
 User.hasMany(Snipe);
 Snipe.belongsTo(User);
+
+sequelize.sync();
 
 export { sequelize };

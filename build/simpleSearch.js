@@ -32,7 +32,6 @@ function simpleSearch(args, graphClient) {
         catch (e) {
             if (e.message)
                 return e.message;
-            // message.reply(`${e.message}`);
             console.log(e);
         }
     });

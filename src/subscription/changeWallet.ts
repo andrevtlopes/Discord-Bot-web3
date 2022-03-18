@@ -9,21 +9,22 @@ export default async function changeWallet(user: User | null, interaction: Comma
 
         if (publicAddress && !utils.isAddress(publicAddress)) {
             await interaction.reply({ content: 'Please, send a valid BEP-20 Address', ephemeral: true });
-        }
-
-        if (user?.publicAddress) {
-            await interaction.reply({ content: 'Wallet already linked', ephemeral: true });
         } else {
-            if (!user && publicAddress) {
-                if (interaction.user) {
-                    user = await User.create({ publicAddress, discordID: interaction.user.id });
-                }
-            } else if (user && publicAddress && !user.publicAddress) {
-                user.publicAddress = publicAddress.toLowerCase();
-                user.save();
-                await interaction.reply({ content: `${publicAddress} linked to your user`, ephemeral: true });
+            if (user?.publicAddress) {
+                await interaction.reply({ content: 'Wallet already linked', ephemeral: true });
             } else {
-                await interaction.reply({ content: 'Something went wrong, try again or send a ticket', ephemeral: true });
+                if (!user && publicAddress) {
+                    if (interaction.user) {
+                        user = await User.create({ publicAddress: publicAddress?.toLocaleLowerCase(), discordID: interaction.user.id });
+                        await interaction.reply({ content: `${publicAddress} linked to your user`, ephemeral: true });
+                    }
+                } else if (user && publicAddress && !user.publicAddress) {
+                    user.publicAddress = publicAddress.toLowerCase();
+                    user.save();
+                    await interaction.reply({ content: `${publicAddress} linked to your user`, ephemeral: true });
+                } else {
+                    await interaction.reply({ content: 'Something went wrong, try again or send a ticket', ephemeral: true });
+                }
             }
         }
     } catch (e: any) {

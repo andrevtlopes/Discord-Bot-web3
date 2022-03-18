@@ -261,6 +261,84 @@ const commands = [
                 .setRequired(false)
         )
         .toJSON(),
+        new SlashCommandBuilder()
+        .setName('price_check')
+        .setDescription(
+            'Search for the last 10 sold ninnekos that matches the parameters'
+        )
+        .addIntegerOption((option) =>
+            option
+                .setName('breed')
+                .setDescription('Breed Quantity')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('weapon')
+                .setDescription('Weapon Name')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('weapon_h1')
+                .setDescription('Weapon H1 Name')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('weapon_h2')
+                .setDescription('Weapon H2 Name')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option.setName('eye').setDescription('Eye Name').setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('eye_h1')
+                .setDescription('Eye H1 Name')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('eye_h2')
+                .setDescription('Eye H2 Name')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option.setName('hat').setDescription('Hat Name').setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('hat_h1')
+                .setDescription('Hat H1 Name')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('hat_h2')
+                .setDescription('Hat H2 Name')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('tail')
+                .setDescription('Tail Name')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('tail_h1')
+                .setDescription('Tail H1 Name')
+                .setRequired(false)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('tail_h2')
+                .setDescription('Tail H2 Name')
+                .setRequired(false)
+        )
+        .toJSON(),
 ];
 
 (async () => {

@@ -1,4 +1,4 @@
-import { Model, InferAttributes, InferCreationAttributes } from 'sequelize';
+import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import SaleHistory from './saleHistory.model';
 
 export default class Ninneko extends Model<InferAttributes<Ninneko>, InferCreationAttributes<Ninneko>> {
@@ -29,4 +29,6 @@ export default class Ninneko extends Model<InferAttributes<Ninneko>, InferCreati
     declare tailD: number;
     declare tailR: number;
     declare tailR1: number;
+    declare soldAt: CreationOptional<string>;
+    declare soldPrice: CreationOptional<number>;
 }

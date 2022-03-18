@@ -9,13 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const parts_1 = require("../parts");
 const searchHelper_1 = require("../searchHelper");
-function check(user, interaction) {
+const types_1 = require("../utils/types");
+function simple(graphClient, interaction) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            let parts = {};
+            for (const part of types_1.partialParts) {
+                const id = (0, searchHelper_1.getPartNumber)(interaction.options.getString(part.discordName), part.partId);
+                parts = Object.assign(Object.assign({}, parts), { [part.name]: id === null ? null : [id] });
+            }
+            const breed = interaction.options.getInteger('breed');
+            const lifeStage = interaction.options.getString('lifestage');
             yield interaction.reply({
-                content: yield checkSnipe(user),
+                content: yield simpleSearch(graphClient, parts, breed, lifeStage),
                 ephemeral: true,
             });
         }
@@ -29,19 +36,12 @@ function check(user, interaction) {
         }
     });
 }
-exports.default = check;
-const checkSnipe = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const snipes = yield user.getSnipes();
-    if (snipes.length > 0) {
-        const snipeArray = [];
-        for (const snipe of snipes) {
-            const fields = parts_1.importantPartArray.map((part) => {
-                var _a;
-                return `${(_a = (0, searchHelper_1.byId)(parts_1.partTypes, part.id)) === null || _a === void 0 ? void 0 : _a.toUpperCase()}: ${(0, searchHelper_1.getPartName)(snipe[part.name + 'D'])} | ${(0, searchHelper_1.getPartName)(snipe[part.name + 'R'])} | ${(0, searchHelper_1.getPartName)(snipe[part.name + 'R1'])}`;
-            });
-            snipeArray.push(`**${snipe.name}**\n${fields.join('\n')}`);
-        }
-        return snipeArray.join('\n');
-    }
-    return 'No snipes to check';
+exports.default = simple;
+const simpleSearch = (graphClient, parts, breed, lifeStage) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield (0, searchHelper_1.queryNinnekos)({
+        breed,
+        parts,
+        lifeStage,
+        sort: 'price',
+    }, graphClient);
 });

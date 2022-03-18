@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const parts_js_1 = require("./parts.js");
 const searchHelper_js_1 = require("./searchHelper.js");
-function priceChecker(args, graphClient) {
+function search(args, graphClient) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const searchArgs = args
@@ -18,35 +19,22 @@ function priceChecker(args, graphClient) {
                 .toLowerCase()
                 .split(':')
                 .map((args) => (args === '' ? null : args));
-            const breed = searchArgs.shift();
+            const faction = getItemsNumber(searchArgs.shift(), parts_js_1.factions);
+            const clazz = getItemsNumber(searchArgs.shift(), parts_js_1.classes);
+            let breed = searchArgs.shift();
+            const lifeStage = getItemsNumber(searchArgs.shift(), parts_js_1.lifeStages, false);
             const partArgs = searchArgs
                 .shift()
                 .split(',')
                 .map((args) => (args === '' ? null : args));
-            const variables = {
-                page: 0,
-                lifeStage,
-                limit: 9,
-                forSale: 1,
-                breedCount: breed,
-                faction,
-                class: clazz,
-                handD: weapon[0],
-                tailD: tail[0],
-                eyesD: eye[0],
-                hairD: hat[0],
-                earsD: ear[0],
-                mouthD: mouth[0],
-                mouthR: mouth[1],
-                mouthR1: mouth[2],
-                sortID,
-                sortPrice,
-                priceSetAt,
-            };
+            const sort = searchArgs.shift();
             return yield (0, searchHelper_js_1.queryNinnekos)({
+                faction,
+                clazz,
                 breed,
+                lifeStage,
                 parts: partArgs,
-                sort: 'price',
+                sort,
             }, graphClient);
         }
         catch (e) {
@@ -56,4 +44,4 @@ function priceChecker(args, graphClient) {
         }
     });
 }
-exports.default = priceChecker;
+exports.default = search;

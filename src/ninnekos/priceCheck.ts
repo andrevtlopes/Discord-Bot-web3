@@ -46,8 +46,8 @@ export default async function priceCheck(interaction: CommandInteraction) {
     });
 
     const table = new AsciiTable3()
+        .setTitle('Last sold Ninnekos')
         .setHeading('BNB', 'FACTION', 'ID', 'B', 'Age', 'H1H2 Weapon', 'H1H2')
-        .setAlign(3, AlignmentEnum.RIGHT)
         .addRowMatrix(
             ninnekos.map((pet) => [
                 parseFloat(utils.formatEther(pet.soldPrice.toString())).toFixed(
@@ -60,9 +60,9 @@ export default async function priceCheck(interaction: CommandInteraction) {
                 getR1R2(pet),
                 getPetR1R2Prob(pet) + '%',
             ])
-        );
+        ).setAligns(AlignmentEnum.RIGHT);
 
-    table.setStyle('compact');
+    table.setStyle('none');
 
     await interaction.editReply(`\`\`\`${table.toString()}\`\`\``);
 }

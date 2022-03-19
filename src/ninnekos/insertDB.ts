@@ -12,7 +12,7 @@ export default async function insertDB(
 ) {
     let recently: any = { };
     if (soldPrice && soldAt) {
-        recently = { soldAt, soldPrice };
+        recently = { soldAt, soldPrice, listedAt: null, listedPrice: null };
     } else if (listedPrice && listedAt) {
         recently = { listedPrice, listedAt };
     } else {

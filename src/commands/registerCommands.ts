@@ -3,8 +3,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { Routes } from 'discord-api-types/v9';
 import 'dotenv/config';
 
-const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
-console.log(process.env.BOT_TOKEN);
+const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN ?? '');
 
 const commands = [
     new SlashCommandBuilder()
@@ -261,7 +260,16 @@ const commands = [
                 .setRequired(false)
         )
         .toJSON(),
-        new SlashCommandBuilder()
+    new SlashCommandBuilder()
+        .setName('time_listed')
+        .setDescription(
+            'Show the time the Ninneko was listed on the marketplace'
+        )
+        .addIntegerOption((option) =>
+            option.setName('id').setDescription('Ninneko ID').setRequired(true)
+        )
+        .toJSON(),
+    new SlashCommandBuilder()
         .setName('price_check')
         .setDescription(
             'Search for the last 10 sold ninnekos that matches the given parameters'
@@ -347,7 +355,7 @@ const commands = [
 
         const res = await rest.put(
             // Routes.applicationGuildCommands(process.env.APPLICATION_ID, '951929724442132520'),
-            Routes.applicationCommands(process.env.APPLICATION_ID),
+            Routes.applicationCommands(process.env.APPLICATION_ID ?? ''),
             { body: commands }
         );
         console.log(res);
@@ -358,7 +366,6 @@ const commands = [
         //     const deleteUrl = `${Routes.applicationCommands(process.env.APPLICATION_ID)}/${command.id}`;
         //     await rest.delete(deleteUrl);
         // }
-        
 
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {

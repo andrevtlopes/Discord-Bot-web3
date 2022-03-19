@@ -35,7 +35,7 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
                 channel = await client.channels.fetch('952338766511628378') as TextChannel;
             }
 
-            const ninneko = await printNinneko(
+            const ninneko = printNinneko(
                 pet,
                 utils.formatEther(parseInt(log.data, 16).toString())
             );

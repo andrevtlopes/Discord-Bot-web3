@@ -94,6 +94,8 @@ async function main() {
                     );
                 } else if (commandName === 'price_check') {
                     await ninnekos.priceCheck(interaction);
+                } else if (commandName === 'time_listed') {
+                    await ninnekos.listedTime(interaction, graphClient);
                 }
             } else {
                 if (commandName === 'subscribe') {

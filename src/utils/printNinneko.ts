@@ -3,7 +3,11 @@ import { partArray, partTypes } from '../parts';
 import { byId, getLifeStage, getPartName } from '../searchHelper';
 import { factions } from './types';
 
-export default async function printNinneko(pet: any, price: string) {
+export default function printNinneko(
+    pet: any,
+    price: string,
+    listedAt: Date | null = null
+): MessageEmbed {
     const fields = partArray.map((part, idx) => ({
         name: byId(partTypes, idx + 1)?.toUpperCase(),
         value: `${getPartName(pet[part + 'D'])}\n${getPartName(
@@ -13,10 +17,10 @@ export default async function printNinneko(pet: any, price: string) {
     }));
 
     const lifeStage = getLifeStage(pet.createdAt);
-     // @ts-ignore
+    // @ts-ignore
     const color = factions[pet.faction].color;
-   
-    return new MessageEmbed()
+
+    const embeded = new MessageEmbed()
         .setColor(color) // 00ab55
         .setTitle(`${pet.id} - ${pet.name}`)
         .setURL(`https://market.ninneko.com/pet/${pet.id}`)
@@ -37,14 +41,15 @@ export default async function printNinneko(pet: any, price: string) {
             {
                 name: lifeStage === 'Adult' ? 'Breeds' : 'New Born',
                 value:
-                    lifeStage === 'Adult'
-                        ? `${pet.breedCount}/6\n`
-                        : lifeStage,
+                    lifeStage === 'Adult' ? `${pet.breedCount}/6\n` : lifeStage,
                 inline: true,
             }
         )
         .addFields(fields);
-        // .setImage('https://i.imgur.com/AfFp7pu.png')
-        // .setTimestamp()
-        // .setFooter({ text: factions[pet.faction].name, iconURL: factions[pet.faction].imageURL });
+
+    if (listedAt) {
+        embeded.setTimestamp(listedAt).setFooter({ text: 'Listed' });
+    }
+
+    return embeded;
 }

@@ -8,15 +8,9 @@ export default async function remove(
     const snipeName = interaction.options.getString('name');
 
     if (snipeName) {
-        await interaction.editReply({
-            content: await removeSnipe(user, snipeName),
-            ephemeral: true,
-        });
+        await interaction.editReply(await removeSnipe(user, snipeName));
     } else {
-        await interaction.editReply({
-            content: 'Snipe name is not set',
-            ephemeral: true,
-        });
+        await interaction.editReply('Snipe name is not set');
     }
 }
 

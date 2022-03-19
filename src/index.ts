@@ -49,7 +49,7 @@ async function main() {
 
     client.on('interactionCreate', async (interaction) => {
         if (!interaction.isCommand()) return;
-        
+
         try {
             await isUserDM(interaction);
 
@@ -67,14 +67,9 @@ async function main() {
                 } else if (commandName === 'subscribe') {
                     const subCommand = interaction.options.getSubcommand();
                     if (subCommand === 'info') {
-                        // TODO: subscribe info
-                        await interaction.editReply({
-                            content: `\`\`\`Not Implemented\`\`\``,
-                        });
+                        await subscription.info(user, interaction);
                     } else {
-                        await interaction.editReply({
-                            content: 'Already Subscribed',
-                        });
+                        await interaction.editReply('Already Subscribed');
                     }
                 } else if (commandName === 'snipe') {
                     const subCommand = interaction.options.getSubcommand();
@@ -86,13 +81,17 @@ async function main() {
                         await sniper.check(user, interaction);
                     }
                 } else if (commandName === 'help') {
-                    await interaction.editReply({
-                        content: `\`\`\`${messages.helpSubscribed}\`\`\``,
-                    });
+                    await interaction.editReply(
+                        `\`\`\`${messages.helpSubscribed}\`\`\`` +
+                            '\nTo see how to use this functions, please go to <#954038774860492860>'
+                    );
                 } else if (commandName === 'show') {
                     const subCommand = interaction.options.getSubcommand();
                     const part = subCommand.slice(0, -1);
-                    await ninnekos.showParts((partTypes as any)[part], interaction);
+                    await ninnekos.showParts(
+                        (partTypes as any)[part],
+                        interaction
+                    );
                 } else if (commandName === 'price_check') {
                     await ninnekos.priceCheck(interaction);
                 }
@@ -107,18 +106,35 @@ async function main() {
                         await subscription.info(user, interaction);
                     }
                 } else if (commandName === 'help') {
-                    await interaction.editReply({
-                        content: `\`\`\`${messages.helpUnsubscribe}\`\`\``,
-                    });
+                    await interaction.editReply(
+                        `\`\`\`${messages.helpUnsubscribe}\`\`\`` +
+                            '\nTo see how to use this functions, please go to <#954038774860492860>'
+                    );
                 } else {
-                    await interaction.editReply('Please, subscribe to use this command');
+                    await interaction.editReply(
+                        'Please, subscribe to use this command'
+                    );
                 }
             }
         } catch (e: any) {
             if (e instanceof BotError) {
                 await interaction.editReply({ content: e.message });
             } else {
-                await interaction.followUp('Something went wrong, try again or send a help ticket. <#954042095348375572>')
+                try {
+                    const reply =
+                        'Something went wrong, try again or send a help ticket. <#954042095348375572>';
+                    if (interaction.replied) {
+                        await interaction.editReply(reply);
+                    } else {
+                        await interaction.followUp(reply);
+                    }
+                } catch (e: any) {
+                    if (e?.message) {
+                        console.log(e.message);
+                    } else {
+                        console.error(e);
+                    }
+                }
             }
             if (e?.message) {
                 console.log(e.message);
@@ -142,20 +158,20 @@ async function main() {
                 '/subscribe ': ['buy'],
                 '\nTo buy acess to the bot.': '',
                 '\nFor more help type:': '',
-                '/help': ''
+                '/help': '',
             };
 
             if (user?.isSubscribed()) {
                 const newCommands = {
-                    '/subscribe': [ 'info' ],
+                    '/subscribe': ['info'],
                     '/search': '',
                     '/snipe': ['add', 'remove', 'info'],
                     '/price_check': '',
                     '\nIf you are in doubt about the ninneko parts you can check here:':
-                       '',
-                    '/show': [ 'weapons', 'eyes', 'hats', 'tails' ],
+                        '',
+                    '/show': ['weapons', 'eyes', 'hats', 'tails'],
                     '\nIf you need help:': '',
-                    '/help': ''
+                    '/help': '',
                 };
                 availableCommands = newCommands as any;
             }
@@ -163,7 +179,9 @@ async function main() {
             const commands = [];
             for (const command of Object.keys(availableCommands)) {
                 if (typeof (availableCommands as any)[command] !== 'string') {
-                    for (const subCommand of (availableCommands as any)[command]) {
+                    for (const subCommand of (availableCommands as any)[
+                        command
+                    ]) {
                         commands.push(`${command} ${subCommand}`);
                     }
                 } else {
@@ -172,8 +190,10 @@ async function main() {
             }
 
             msg.channel.send(
-                'Available commands:\n```' + commands.join('\n') + '```' + 
-                'To see how to use this functions, please go to <#954038774860492860>'
+                'Available commands:\n```' +
+                    commands.join('\n') +
+                    '```' +
+                    '\nTo see how to use this functions, please go to <#954038774860492860>'
             );
         }
 

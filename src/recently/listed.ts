@@ -1,11 +1,12 @@
 import { GraphQLClient } from 'graphql-request';
 import provider from '../utils/provider';
-import Snipe from '../models/snipe.model';
+import User from '../models/user.model';
 import query from '../query/index';
 import printNinneko from '../utils/printNinneko';
 import { utils } from 'ethers';
 import { Client, TextChannel } from 'discord.js';
 import ninnekos from '../ninnekos';
+import { Op } from 'sequelize';
 
 export default function listed(graphClient: GraphQLClient, client: Client) {
     const filterListed = {
@@ -45,13 +46,17 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
                 ]
             });
 
-            // TODO: Loop by Users insted of snipes, the overhead is very big in this way
-            const snipes = await Snipe.findAll();
+            const users = await User.findAll({
+                where: {
+                    subscriptionDue: {
+                        [Op.gt]: new Date(),
+                    },
+                }
+            });
 
-
-            for (const snipe of snipes) {
-                const user = await snipe.getUser();
-                if (user && user.isSubscribed()) {
+            for (const user of users) {
+                const snipes = await user.getSnipes();
+                for (const snipe of snipes) {
                     const member = await client.users.fetch(user.discordID);
                     if (snipe.compareSnipeWithNinneko(pet)) {
                         member?.send({
@@ -62,6 +67,24 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
                     }
                 }
             }
+
+            // TODO: Loop by Users insted of snipes, the overhead is very big in this way
+            // const snipes = await Snipe.findAll();
+
+
+            // for (const snipe of snipes) {
+            //     const user = await snipe.getUser();
+            //     if (user && user.isSubscribed()) {
+            //         const member = await client.users.fetch(user.discordID);
+            //         if (snipe.compareSnipeWithNinneko(pet)) {
+            //             member?.send({
+            //                 embeds: [
+            //                     ninneko
+            //                 ]
+            //             });
+            //         }
+            //     }
+            // }
         }
     });
 }

@@ -17,25 +17,25 @@ const helpUnsubscribe =
 \n                                      the bot will automatically verify your payment\
 \n\
 \nHOW DOES IT WORK?\
-\nAll interactions with our features are done preferably via DM with Ninneko Power Search#0285 (here).\
+\nAll interactions with our features are done preferably via DM with VV Bot#0285 (here).\
 \nAfter purchasing the subscription you will have access to our features and our private channel where you will receive support and exchange experiences with other users.\
 \n\
 \nHOW MUCH DOES IT COST?\
 \n20 BUSD per week\
 \n\
 \nBE AWARE OF SCAMMERS!\
-\nOur team (beside Ninneko Power Search#0285) will NEVER direct message you.\
-\nBEFORE sending your BUSDs make sure you are talking to the correct bot. To do this go to the NPS Server member list (upper right), right click on Ninneko Power Search Bot, and click on 'message'.";
+\nOur team (beside VV Bot#0285) will NEVER direct message you.\
+\nBEFORE sending your BUSDs make sure you are talking to the correct bot. To do this go to the NPS Server member list (upper right), right click on VV Bot Bot, and click on 'message'.";
 
 const welcome =
     'Hi!\
-\nWelcome to Ninneko Power Search!\
+\nWelcome to VV Bot!\
 \n\
 \n' + helpUnsubscribe;
 
 const helpCommands = {
     '/subscribe': { info: 'Information about your subscription and wallet' },
-    '/search [[parts]] [breed] [life_stage]': 'Search Ninneko by H1 and H2',
+    '/search [[parts]] [breed] [life_stage]': 'Search Ninneko by genes/traits, breed count and life stage',
     '/snipe': {
         'add [name] [[parts]]':
             'Add new snipe with provided ninneko parts information (Up to 3)',

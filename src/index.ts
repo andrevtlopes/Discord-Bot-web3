@@ -142,10 +142,6 @@ async function main() {
                         console.error(e);
                     }
                 }
-            }
-            if (e?.message) {
-                console.log(e.message);
-            } else {
                 console.error(e);
             }
         }

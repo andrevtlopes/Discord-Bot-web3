@@ -18,5 +18,6 @@ export default async function sellWatcher(user: User, interaction: CommandIntera
     
         await interaction.editReply({ embeds: [fetchedNinneko] });
         await interaction.followUp('The bot will send you a message if your ninneko is sold!');
+        console.log(`[WATCHER][${interaction.user.username}] ${id}`)
     }
 }

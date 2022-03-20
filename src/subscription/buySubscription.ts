@@ -32,6 +32,7 @@ export default async function buySubscription(
         const now = new Date(); //creates date object at current time
 
         await interaction.editReply({ content: 'Subscribed until next week' });
+        console.log(`[SUBSCRIBE][${interaction.user.username}]`);
 
         // Execute task after (date - now) milliseconds
         setTimeout(async function () {

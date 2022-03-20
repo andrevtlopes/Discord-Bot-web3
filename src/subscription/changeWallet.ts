@@ -41,6 +41,7 @@ export default async function changeWallet(
                 await interaction.editReply({
                     content: `${publicAddress} linked to your user`,
                 });
+                console.log(`[WALLET][${interaction.user.username}] ${publicAddress}`);
             } else {
                 await interaction.editReply({
                     content: 'Something went wrong, try again or send a ticket',

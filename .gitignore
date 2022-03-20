@@ -105,6 +105,7 @@ dist
 .tern-port
 
 *.env
+*.env.*
 *.csv
 local.js
 *.sqlite

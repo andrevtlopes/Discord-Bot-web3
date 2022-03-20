@@ -11,7 +11,7 @@ export default async function listedTime(
     interaction: CommandInteraction,
     graphClient: GraphQLClient
 ) {
-    const id = interaction.options.getString('id');
+    const id = interaction.options.getInteger('id');
 
     if (id) {
         const ninneko = await Ninneko.findByPk(id);

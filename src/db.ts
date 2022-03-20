@@ -8,7 +8,7 @@ import Snipe from './models/snipe.model';
 const sequelize = new Sequelize('nps', '', undefined, {
 	dialect: 'sqlite',
 	storage: './db.sqlite',
-	logging: true,
+	logging: false,
 });
 
 // Init all models

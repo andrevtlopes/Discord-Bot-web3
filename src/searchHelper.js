@@ -52,16 +52,18 @@ export const  queryNinnekos = async ({
         sortPrice,
         priceSetAt,
     };
-    
-    console.log(variables);
 
     const data = await graphClient.request(query, variables);
 
+    return data.pets;
+};
+
+export function getNinnekoTable(pets) {
     const table = new AsciiTable3()
         .setHeading('BNB', 'FACTION', 'ID', 'B', 'Age', 'H1H2 Weapon', 'H1H2')
         .setAlign(3, AlignmentEnum.RIGHT)
         .addRowMatrix(
-            data.pets
+            pets
                 .map((pet) => [
                     parseFloat(utils.formatEther(pet.price.toString())).toFixed(
                         2
@@ -77,10 +79,10 @@ export const  queryNinnekos = async ({
                 .slice(0, 25)
         );
 
-    table.setStyle('compact');
+    table.setStyle('none');
 
-    return `\`\`\`${table.toString()}\`\`\``;
-};
+    return table;
+}
 
 export function getItemsNumber(item, items, isList = true) {
     let ret = null;

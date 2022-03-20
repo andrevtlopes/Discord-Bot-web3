@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { Interaction, MessageEmbed } from 'discord.js';
 import { partArray, partTypes } from '../parts';
 import { byId, getLifeStage, getPartName } from '../searchHelper';
 import { factions } from './types';
@@ -20,12 +20,33 @@ export default function printNinneko(
     // @ts-ignore
     const color = factions[pet.faction].color;
 
-    const embeded = new MessageEmbed()
+    const embeded = new MessageEmbed();
+
+    if (listedAt) {
+        const createdDate = new Date(listedAt);
+        // get total seconds between the times
+        let delta = Math.abs(new Date().getTime() - createdDate.getTime()) / 1000;
+    
+        // calculate (and subtract) whole days
+        let days = Math.floor(delta / 86400);
+        delta -= days * 86400;
+    
+        // calculate (and subtract) whole hours
+        let hours = Math.floor(delta / 3600) % 24;
+        delta -= hours * 3600;
+    
+        // calculate (and subtract) whole minutes
+        let minutes = Math.floor(delta / 60) % 60;
+        
+        embeded.setFooter({ text: 'Listed at' }).setTimestamp(listedAt).setDescription(`${days}d ${hours}:${minutes}h on the marketplace`);
+    }
+
+    embeded
         .setColor(color) // 00ab55
-        .setTitle(`${pet.id} - ${pet.name}`)
+        .setTitle(`${pet.id}${pet.name ? ' - ' + pet.name : ''}`)
         .setURL(`https://market.ninneko.com/pet/${pet.id}`)
         // .setDescription('Some description here')
-        .setThumbnail(pet.avatarURL)
+        .setThumbnail(`https://assets.ninneko.com/avatars/${pet.id}.png`)
         .addFields(
             {
                 name: 'Faction',
@@ -46,10 +67,6 @@ export default function printNinneko(
             }
         )
         .addFields(fields);
-
-    if (listedAt) {
-        embeded.setTimestamp(listedAt).setFooter({ text: 'Listed' });
-    }
 
     return embeded;
 }

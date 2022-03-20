@@ -21,7 +21,7 @@ export default async function showParts(
             ]);
         }
     }
-    table.setAligns(AlignmentEnum.LEFT).setStyle('none');
+    table.setStyle('none');
 
     interaction.editReply(`\`\`\`${table.toString()}\`\`\``);
 }

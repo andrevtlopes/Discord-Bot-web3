@@ -10,7 +10,7 @@ export default async function info(
     await interaction.editReply(
         `BEP-20 address: \`${
             publicAddress || 'Please, link an address'
-        }\` Subscription due: \`${
+        }\`\nSubscription due: \`${
             user?.isSubscribed()
                 ? subscriptionDue?.toLocaleDateString()
                 : 'Not Subscribed'

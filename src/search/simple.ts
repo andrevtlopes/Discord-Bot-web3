@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { GraphQLClient } from 'graphql-request';
-import { getPartNumber, queryNinnekos } from '../searchHelper';
+import { getNinnekoTable, getPartNumber, queryNinnekos } from '../searchHelper';
 import { partialParts } from '../utils/types';
 
 export default async function simple(
@@ -23,7 +23,7 @@ export default async function simple(
     const lifeStage = interaction.options.getString('lifestage');
 
     await interaction.editReply({
-        content: await simpleSearch(graphClient, parts, breed, lifeStage),
+        content: '```' + await simpleSearch(graphClient, parts, breed, lifeStage) + '```',
     });
 }
 
@@ -33,7 +33,7 @@ const simpleSearch = async (
     breed: number | null,
     lifeStage: string | null
 ): Promise<string> => {
-    return await queryNinnekos(
+    return getNinnekoTable(await queryNinnekos(
         {
             // @ts-ignore
             breed,
@@ -44,5 +44,5 @@ const simpleSearch = async (
             sort: 'price',
         },
         graphClient
-    );
+    )).toString();
 };

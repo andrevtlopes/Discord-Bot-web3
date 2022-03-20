@@ -97,7 +97,7 @@ async function main() {
                 } else if (commandName === 'time_listed') {
                     await ninnekos.listedTime(interaction, graphClient);
                 } else if (commandName === 'average') {
-                    await ninnekos.averagePrice(interaction, graphClient);
+                    await ninnekos.averagePrice(interaction);
                 }
             } else {
                 if (commandName === 'subscribe') {

@@ -25,9 +25,15 @@ export default async function changeWallet(
                         publicAddress: publicAddress?.toLocaleLowerCase(),
                         discordID: interaction.user.id,
                     });
-                    await interaction.editReply({
-                        content: `${publicAddress} linked to your user`,
-                    });
+                    const subscribed =
+                        user?.subscriptionDue.getTime() > new Date().getTime()
+                            ? `Subscribe until <t:${
+                                  user?.subscriptionDue.getTime() / 1000
+                              }:d>`
+                            : 'Now, subscribe to have access to the bot\n`/subscribe buy`';
+                    await interaction.editReply(
+                        `${publicAddress} linked to your user\n\n` + subscribed
+                    );
                 }
             } else if (user && publicAddress && !user.publicAddress) {
                 user.publicAddress = publicAddress.toLowerCase();

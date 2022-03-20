@@ -31,6 +31,7 @@ User.init(
 		},
 		subscriptionDue: {
 			type: DATE,
+			defaultValue: new Date('2022-03-28T00:00:00Z')
 		},
 		txID: {
 			type: STRING,

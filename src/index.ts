@@ -161,10 +161,11 @@ async function main() {
             let availableCommands = {
                 'This is a private bot that need to be bought.': '',
                 '\nTo buy the bot please type:': '',
-                '/subscribe': ['wallet'],
+                '/subscribe': ['wallet (your wallet address here)'],
+                '\nExample: /subscribe wallet 0xf3C149335645d6bf09c023e3Ec1Ef3974c94b63': '',
                 '\nAfter linking your wallet to the bot you can:': '',
-                '/subscribe ': ['buy'],
-                '\nTo buy acess to the bot.': '',
+                '\n/subscribe': ['buy'],
+                '\nTo buy access to the bot.': '',
                 '\nFor more help type:': '',
                 '/help': '',
             };
@@ -213,7 +214,7 @@ async function main() {
     console.log('{SETUP] Initial Messages Registered');
 
     client.on('guildMemberAdd', async (member) => {
-        const dm = member.user.dmChannel;
+        const dm = member.user;
         if (dm) {
             dm.send(`\`\`\`${messages.welcome}\`\`\``);
         } else {

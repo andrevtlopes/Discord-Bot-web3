@@ -1,10 +1,10 @@
-import { Log } from "@ethersproject/abstract-provider";
-import { User } from "discord.js";
-import { utils } from "ethers";
-import Ninneko from "../models/ninneko.model";
-import Selling from "../models/selling.model";
-import printNinneko from "../utils/printNinneko";
-import provider from "../utils/provider";
+import { Log } from '@ethersproject/abstract-provider';
+import { User } from 'discord.js';
+import { utils } from 'ethers';
+import Ninneko from '../models/ninneko.model';
+import Selling from '../models/selling.model';
+import printNinneko from '../utils/printNinneko';
+import provider from '../utils/provider';
 
 export default async function soldbyId(selling: Selling, member: User) {
     const filterSold = {
@@ -37,6 +37,7 @@ export default async function soldbyId(selling: Selling, member: User) {
                         ),
                     ],
                 });
+                console.log(`[SOLD][${member.username}] ${ninneko.id}`);
             }
             Selling.destroy({ where: { id: selling.id } });
         }

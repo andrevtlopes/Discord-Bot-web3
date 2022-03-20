@@ -75,6 +75,7 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
                                 await member?.send({
                                     embeds: [ninneko],
                                 });
+                                console.log(`[SNIPE][${member.username}] ${pet.id}`);
                             }
                         }
                     }

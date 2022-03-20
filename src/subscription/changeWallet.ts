@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { CommandInteraction, GuildMemberRoleManager } from 'discord.js';
 import { ethers, utils } from 'ethers';
 import User from '../models/user.model';
 import add from './add';
@@ -31,6 +31,35 @@ export default async function changeWallet(
                                   user?.subscriptionDue.getTime() / 1000
                               }:d>`
                             : 'Now, subscribe to have access to the bot\n`/subscribe buy`';
+
+                    if (
+                        user?.subscriptionDue.getTime() > new Date().getTime()
+                    ) {
+                        const guild =
+                            interaction.client.guilds.cache.get(
+                                '951929724442132520'
+                            );
+                        const role = guild?.roles.cache.find(
+                            (role) => role.name === 'Subscribed'
+                        );
+                        const member = guild?.members.cache.find(
+                            (member) => member.id === interaction.user.id
+                        );
+                        if (role && member) {
+                            await (member?.roles as GuildMemberRoleManager).add(
+                                role as any
+                            );
+                            console.log('[ROLE][ADD][' + interaction.user.username + ']');
+                        }
+                        // Execute task after (date - now) milliseconds
+                        setTimeout(async function () {
+                            console.log('[ROLE][REMOVE][' + interaction.user.username + ']');
+                            await (
+                                member?.roles as GuildMemberRoleManager
+                            ).remove(role as any);
+                        }, user.subscriptionDue.getTime() -
+                            new Date().getTime());
+                    }
                     await interaction.editReply(
                         `${publicAddress} linked to your user\n\n` + subscribed
                     );
@@ -41,7 +70,9 @@ export default async function changeWallet(
                 await interaction.editReply({
                     content: `${publicAddress} linked to your user`,
                 });
-                console.log(`[WALLET][${interaction.user.username}] ${publicAddress}`);
+                console.log(
+                    `[WALLET][${interaction.user.username}] ${publicAddress}`
+                );
             } else {
                 await interaction.editReply({
                     content: 'Something went wrong, try again or send a ticket',

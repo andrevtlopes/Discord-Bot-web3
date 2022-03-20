@@ -1,7 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { utils } from 'ethers';
 import { GraphQLClient } from 'graphql-request';
-import ninnekos from '.';
 import BotError from '../BotError';
 import Ninneko from '../models/ninneko.model';
 import query from '../query/index';

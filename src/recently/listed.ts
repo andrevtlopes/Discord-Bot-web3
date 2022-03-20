@@ -30,9 +30,9 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
 
             await ninnekos.insertDB(data.pet, graphClient, null, null, parseInt(log.data, 16), timestamp);
 
-            let channel = client.channels.cache.get('952338766511628378') as TextChannel;
+            let channel = client.channels.cache.get(process.env.LISTED_CHANNEL_ID || '') as TextChannel;
             if (!channel) {
-                channel = await client.channels.fetch('952338766511628378') as TextChannel;
+                channel = await client.channels.fetch(process.env.LISTED_CHANNEL_ID || '') as TextChannel;
             }
 
             const ninneko = printNinneko(
@@ -56,14 +56,18 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
 
             for (const user of users) {
                 const snipes = await user.getSnipes();
-                for (const snipe of snipes) {
+                if (!user.discordID) {
                     const member = await client.users.fetch(user.discordID);
-                    if (snipe.compareSnipeWithNinneko(pet)) {
-                        member?.send({
-                            embeds: [
-                                ninneko
-                            ]
-                        });
+                    if (member) {
+                        for (const snipe of snipes) {
+                            if (snipe.compareSnipeWithNinneko(pet)) {
+                                await member?.send({
+                                    embeds: [
+                                        ninneko
+                                    ]
+                                });
+                            }
+                        }
                     }
                 }
             }

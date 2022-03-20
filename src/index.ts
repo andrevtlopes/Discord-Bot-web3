@@ -32,7 +32,6 @@ async function main() {
         partials: ['CHANNEL'],
     });
     client.login(process.env.BOT_TOKEN);
-    await rolesTimeout(client);
 
     const endpoint = 'https://api.ninneko.com/graphql';
 
@@ -44,8 +43,10 @@ async function main() {
 
     if (!disableRecently) {
         recently.listed(graphClient, client);
-        recently.sold(graphClient, client);
+        await recently.sold(graphClient, client);
     }
+
+    await rolesTimeout(client);
 
     client.on('interactionCreate', async (interaction) => {
         if (!interaction.isCommand()) return;
@@ -98,6 +99,8 @@ async function main() {
                     await ninnekos.listedTime(interaction, graphClient);
                 } else if (commandName === 'average') {
                     await ninnekos.averagePrice(interaction);
+                } else if (commandName === 'sell_watcher') {
+                    await ninnekos.sellWatcher(user, interaction, graphClient);
                 }
             } else {
                 if (commandName === 'subscribe') {

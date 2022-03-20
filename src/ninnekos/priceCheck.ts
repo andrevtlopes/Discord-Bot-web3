@@ -5,16 +5,12 @@ import {
     getLifeStage,
     getPartName,
     getPartNumber,
-    getPetR1R2Prob,
-    getR1R2,
 } from '../searchHelper';
 import { partialParts } from '../utils/types';
-// @ts-ignore
 import { AsciiTable3, AlignmentEnum } from 'ascii-table3';
 import { utils } from 'ethers';
 import { factions } from '../parts';
 import { Op } from 'sequelize';
-import isUserDM from '../utils/isUserDM';
 
 export default async function priceCheck(interaction: CommandInteraction) {
     let parts = {};

@@ -269,6 +269,15 @@ const commands = [
             option.setName('id').setDescription('Ninneko ID').setRequired(true)
         )
         .toJSON(),
+        new SlashCommandBuilder()
+        .setName('sell_watcher')
+        .setDescription(
+            'Send a message when your Ninneko is sold'
+        )
+        .addIntegerOption((option) =>
+            option.setName('id').setDescription('Ninneko ID').setRequired(true)
+        )
+        .toJSON(),
     new SlashCommandBuilder()
         .setName('price_check')
         .setDescription(

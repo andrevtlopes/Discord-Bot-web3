@@ -8,6 +8,7 @@ import {
     HasManyCreateAssociationMixin,
     HasManyRemoveAssociationMixin,
 } from 'sequelize';
+import Selling from './selling.model';
 import Snipe from './snipe.model';
 
 // order of InferAttributes & InferCreationAttributes is important.
@@ -26,6 +27,11 @@ export default class User extends Model<
     declare createSnipe: HasManyCreateAssociationMixin<Snipe>;
     declare removeSnipe: HasManyRemoveAssociationMixin<Snipe, number>;
     declare countSnipes: HasManyCountAssociationsMixin;
+
+    declare getSellings: HasManyGetAssociationsMixin<Selling>;
+    declare createSelling: HasManyCreateAssociationMixin<Selling>;
+    declare removeSelling: HasManyRemoveAssociationMixin<Selling, number>;
+    declare countSellings: HasManyCountAssociationsMixin;
 
     isSubscribed(): boolean {
         const now = new Date();

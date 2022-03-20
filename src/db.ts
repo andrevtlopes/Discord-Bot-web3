@@ -4,6 +4,7 @@ import User from './models/user.model';
 import Ninneko from './models/ninneko.model';
 import SaleHistory from './models/saleHistory.model';
 import Snipe from './models/snipe.model';
+import Selling from './models/selling.model';
 
 const sequelize = new Sequelize('nps', '', undefined, {
 	dialect: 'sqlite',
@@ -232,9 +233,29 @@ Snipe.init(
 	}
 );
 
+Selling.init(
+	{
+		id: {
+			type: INTEGER.UNSIGNED,
+			autoIncrement: true,
+			primaryKey: true
+		},
+		ninnekoId: {
+			type: INTEGER.UNSIGNED,
+			allowNull: false,
+		},
+	},
+	{
+		tableName: 'sellings',
+		sequelize,
+	}
+);
+
 Ninneko.hasMany(SaleHistory);
 User.hasMany(Snipe);
 Snipe.belongsTo(User);
+User.hasMany(Selling);
+Selling.belongsTo(User);
 
 sequelize.sync();
 

@@ -5,7 +5,6 @@ import {
     CreationOptional,
     BelongsToGetAssociationMixin,
 } from 'sequelize';
-import { importantPartArray } from '../parts';
 import { partialParts } from '../utils/types';
 import User from './user.model';
 

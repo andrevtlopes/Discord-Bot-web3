@@ -19,6 +19,8 @@ export default async function insertDB(
         const history = await graphClient.request(query.saleHistory, {
             id: pet.id,
         });
+
+        let listed = { listedAt: null, listedPrice: null };
         
         if (pet.updatedAt && pet.forSale === 1) {
             recently = { listedAt: pet.updatedAt, listedPrice: pet.price };
@@ -27,9 +29,9 @@ export default async function insertDB(
         for (const s of history.saleHistory) {
             soldAt = new Date(s.createdAt);
             if (!recently?.soldAt) {
-                recently = { ...recently, soldAt, soldPrice: s.price };
+                recently = { ...listed, soldAt, soldPrice: s.price };
             } else if (soldAt.getTime() > recently.soldAt.getTime()) {
-                recently = { ...recently, soldAt, soldPrice: s.price };
+                recently = { ...listed, soldAt, soldPrice: s.price };
             }
         }
     }

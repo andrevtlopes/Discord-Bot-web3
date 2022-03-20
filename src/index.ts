@@ -47,9 +47,6 @@ async function main() {
         await recently.sold(graphClient, client);
     }
 
-    await rolesTimeout(client);
-    await getMissingNinnekos(graphClient);
-
     client.on('interactionCreate', async (interaction) => {
         if (!interaction.isCommand()) return;
 
@@ -125,6 +122,8 @@ async function main() {
                     );
                 }
             }
+
+            console.log('{SETUP] Commands Registered');
         } catch (e: any) {
             if (e instanceof BotError) {
                 await interaction.editReply({ content: e.message });
@@ -204,6 +203,8 @@ async function main() {
                     '```' +
                     '\nTo see how to use this functions, please go to <#954038774860492860>'
             );
+
+            console.log('{SETUP] Initial Messages Registered');
         }
 
         // you can do anything you want here. In my case I put console.log() function.
@@ -214,44 +215,16 @@ async function main() {
 
     client.on('guildMemberAdd', async (member) => {
         member.send(`\`\`\`${messages.welcome}\`\`\``);
+        console.log('{SETUP] Enter Server Messages Registered');
     });
-
-    // client.on('messageCreate', async function (message) {
-    //     if (message.author.bot) return;
-    //     if (!message.content.startsWith(prefix)) return;
-
-    //     const commandBody = message.content.slice(prefix.length);
-    //     const args = commandBody.split('@');
-    //     const command = args?.shift()?.toLowerCase();
-
-    //     let user = await User.findOne({
-    //         where: { discordID: message.author.id },
-    //     });
-    //     if (user?.isSubscribed()) {
-    //         if (command === 'ping') {
-    //             const timeTaken = Date.now() - message.createdTimestamp;
-    //             message.reply(
-    //                 `Pong! This message had a latency of ${timeTaken}ms.`
-    //             );
-    //         }
-    //         // search@Faction:Class:Breed:LifeStage:Parts:Sort,
-    //         // Parts: weapon, tail, eye, hat, ear, mouth
-    //         else if (command === 'search') {
-    //             message.reply(await search(args, graphClient));
-    //         } else if (command === 'simple') {
-    //             message.reply(await simpleSearch(args, graphClient));
-    //         }
-    //     } else {
-    //         if (command === 'subscribe') {
-    //         }
-    //     }
-    // });
 
     // Create new tables
     await sequelize.sync();
 
-    // const data = await graphClient.request(query, variables);
-    // console.log(JSON.stringify(data, undefined, 2));
+    await rolesTimeout(client);
+    await getMissingNinnekos(graphClient);
+
+    console.log('{SETUP] Finished');
 }
 
 main().catch((error) => console.error(error));

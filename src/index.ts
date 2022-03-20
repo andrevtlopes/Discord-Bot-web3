@@ -29,6 +29,7 @@ async function main() {
             'GUILD_MESSAGES',
             'DIRECT_MESSAGES',
             'GUILD_PRESENCES',
+            'GUILD_MEMBERS'
         ],
         partials: ['CHANNEL'],
     });
@@ -122,8 +123,6 @@ async function main() {
                     );
                 }
             }
-
-            console.log('{SETUP] Commands Registered');
         } catch (e: any) {
             if (e instanceof BotError) {
                 await interaction.editReply({ content: e.message });
@@ -151,6 +150,7 @@ async function main() {
             }
         }
     });
+    console.log('{SETUP] Commands Registered');
 
     client.on('messageCreate', async (msg) => {
         if (msg.author.bot) return;
@@ -203,8 +203,6 @@ async function main() {
                     '```' +
                     '\nTo see how to use this functions, please go to <#954038774860492860>'
             );
-
-            console.log('{SETUP] Initial Messages Registered');
         }
 
         // you can do anything you want here. In my case I put console.log() function.
@@ -212,11 +210,17 @@ async function main() {
 
         // }
     });
+    console.log('{SETUP] Initial Messages Registered');
 
     client.on('guildMemberAdd', async (member) => {
-        member.send(`\`\`\`${messages.welcome}\`\`\``);
-        console.log('{SETUP] Enter Server Messages Registered');
+        const dm = member.user.dmChannel;
+        if (dm) {
+            dm.send(`\`\`\`${messages.welcome}\`\`\``);
+        } else {
+            console.log(`[DM][INVALID][${member.user.username}]`);
+        }
     });
+    console.log('[SETUP] Enter Server Messages Registered');
 
     // Create new tables
     await sequelize.sync();

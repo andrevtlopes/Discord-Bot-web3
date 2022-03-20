@@ -15,6 +15,7 @@ import ninnekos from './ninnekos';
 import BotError from './BotError';
 import isUserDM from './utils/isUserDM';
 import { partTypes } from './parts';
+import getMissingNinnekos from './utils/getMissingNinnekos';
 
 async function main() {
     let disableRecently = false;
@@ -47,6 +48,7 @@ async function main() {
     }
 
     await rolesTimeout(client);
+    await getMissingNinnekos(graphClient);
 
     client.on('interactionCreate', async (interaction) => {
         if (!interaction.isCommand()) return;

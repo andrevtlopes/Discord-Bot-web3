@@ -23,16 +23,29 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
                 id: parseInt(tokenId, 16),
             };
 
-            const timestamp = new Date((await provider.getBlock(log.blockHash)).timestamp * 1000);
+            const timestamp = new Date(
+                (await provider.getBlock(log.blockHash)).timestamp * 1000
+            );
 
             const data = await graphClient.request(query.pet, variables);
             const pet = data.pet;
 
-            await ninnekos.insertDB(data.pet, graphClient, null, null, parseInt(log.data, 16), timestamp);
+            await ninnekos.insertDB(
+                data.pet,
+                graphClient,
+                null,
+                null,
+                parseInt(log.data, 16),
+                timestamp
+            );
 
-            let channel = client.channels.cache.get(process.env.LISTED_CHANNEL_ID || '') as TextChannel;
+            let channel = client.channels.cache.get(
+                process.env.LISTED_CHANNEL_ID || ''
+            ) as TextChannel;
             if (!channel) {
-                channel = await client.channels.fetch(process.env.LISTED_CHANNEL_ID || '') as TextChannel;
+                channel = (await client.channels.fetch(
+                    process.env.LISTED_CHANNEL_ID || ''
+                )) as TextChannel;
             }
 
             const ninneko = printNinneko(
@@ -41,9 +54,7 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
             );
 
             await channel.send({
-                embeds: [
-                    ninneko
-                ]
+                embeds: [ninneko],
             });
 
             const users = await User.findAll({
@@ -51,7 +62,7 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
                     subscriptionDue: {
                         [Op.gt]: new Date(),
                     },
-                }
+                },
             });
 
             for (const user of users) {
@@ -62,9 +73,7 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
                         for (const snipe of snipes) {
                             if (snipe.compareSnipeWithNinneko(pet)) {
                                 await member?.send({
-                                    embeds: [
-                                        ninneko
-                                    ]
+                                    embeds: [ninneko],
                                 });
                             }
                         }
@@ -74,7 +83,6 @@ export default function listed(graphClient: GraphQLClient, client: Client) {
 
             // TODO: Loop by Users insted of snipes, the overhead is very big in this way
             // const snipes = await Snipe.findAll();
-
 
             // for (const snipe of snipes) {
             //     const user = await snipe.getUser();

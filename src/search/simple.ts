@@ -21,11 +21,12 @@ export default async function simple(
 
     const breed = interaction.options.getInteger('breed');
     const lifeStage = interaction.options.getString('life_stage');
+    const faction = interaction.options.getString('faction');
 
     await interaction.editReply({
         content:
             '`' +
-            (await simpleSearch(graphClient, parts, breed, lifeStage)) +
+            (await simpleSearch(graphClient, parts, breed, lifeStage, faction)) +
             '`',
     });
 }
@@ -34,7 +35,8 @@ const simpleSearch = async (
     graphClient: GraphQLClient,
     parts: any,
     breed: number | null,
-    lifeStage: string | null
+    lifeStage: string | null,
+    faction: string | null,
 ): Promise<string> => {
     return getNinnekoTable(
         await queryNinnekos(
@@ -44,6 +46,8 @@ const simpleSearch = async (
                 parts,
                 // @ts-ignore
                 lifeStage,
+                // @ts-ignore
+                faction,
                 // @ts-ignore
                 sort: 'price',
             },

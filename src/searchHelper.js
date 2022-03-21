@@ -40,13 +40,15 @@ export const  queryNinnekos = async ({
         lifeStageId = 2;
     }
 
+    let factionId = factions[faction?.toLowerCase()] || null;
+
     const variables = {
         page: 0,
         lifeStage: lifeStageId,
         limit: 1000,
         forSale: 1,
         breedCount: breed,
-        faction,
+        faction: [factionId],
         class: clazz,
         ...parts,
         sortID,

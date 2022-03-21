@@ -146,7 +146,7 @@ async function main() {
             }
         }
     });
-    console.log('{SETUP] Commands Registered');
+    console.log('[SETUP] Commands Registered');
 
     client.on('messageCreate', async (msg) => {
         if (msg.author.bot) return;
@@ -207,7 +207,7 @@ async function main() {
 
         // }
     });
-    console.log('{SETUP] Initial Messages Registered');
+    console.log('[SETUP] Initial Messages Registered');
 
     client.on('guildMemberAdd', async (member) => {
         const dm = member.user;
@@ -225,7 +225,7 @@ async function main() {
     await rolesTimeout(client);
     await getMissingNinnekos(graphClient);
 
-    console.log('{SETUP] Finished');
+    console.log('[SETUP] Finished');
 }
 
 main().catch((error) => console.error(error));

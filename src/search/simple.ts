@@ -20,10 +20,13 @@ export default async function simple(
     }
 
     const breed = interaction.options.getInteger('breed');
-    const lifeStage = interaction.options.getString('lifestage');
+    const lifeStage = interaction.options.getString('life_stage');
 
     await interaction.editReply({
-        content: '```' + await simpleSearch(graphClient, parts, breed, lifeStage) + '```',
+        content:
+            '`' +
+            (await simpleSearch(graphClient, parts, breed, lifeStage)) +
+            '`',
     });
 }
 
@@ -33,16 +36,18 @@ const simpleSearch = async (
     breed: number | null,
     lifeStage: string | null
 ): Promise<string> => {
-    return getNinnekoTable(await queryNinnekos(
-        {
-            // @ts-ignore
-            breed,
-            parts,
-            // @ts-ignore
-            lifeStage,
-            // @ts-ignore
-            sort: 'price',
-        },
-        graphClient
-    )).toString();
+    return getNinnekoTable(
+        await queryNinnekos(
+            {
+                // @ts-ignore
+                breed,
+                parts,
+                // @ts-ignore
+                lifeStage,
+                // @ts-ignore
+                sort: 'price',
+            },
+            graphClient
+        )
+    ).toString();
 };

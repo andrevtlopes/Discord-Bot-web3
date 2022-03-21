@@ -7,6 +7,7 @@ import {
 import { utils } from 'ethers';
 import { AsciiTable3, AlignmentEnum } from 'ascii-table3';
 import WrongItemError from './WrongItemError';
+import moment from 'moment';
 
 export const  queryNinnekos = async ({
     faction = null,
@@ -34,9 +35,9 @@ export const  queryNinnekos = async ({
 
     let lifeStageId = null;
     if (lifeStage?.toLowerCase() === 'new born') {
-        lifeStageId = 0;
-    } else if (lifeStage?.toLowerCase() === 'adult') {
         lifeStageId = 1;
+    } else if (lifeStage?.toLowerCase() === 'adult') {
+        lifeStageId = 2;
     }
 
     const variables = {
@@ -60,7 +61,7 @@ export const  queryNinnekos = async ({
 
 export function getNinnekoTable(pets) {
     const table = new AsciiTable3()
-        .setHeading('BNB', 'FACTION', 'ID', 'B', 'Age', 'H1H2 Weapon', 'H1H2')
+        .setHeading('BNB', 'FACTION', 'ID', 'B', 'Age', 'H1H2 Weapon', 'HAT|TAIL|EYE')
         .setAlign(3, AlignmentEnum.RIGHT)
         .addRowMatrix(
             pets
@@ -73,8 +74,7 @@ export function getNinnekoTable(pets) {
                     pet.breedCount,
                     getLifeStage(pet.createdAt),
                     getR1R2(pet),
-                    // getR1R2Prob(pet, 'hand') + '%',
-                    getPetR1R2Prob(pet) + '%',
+                    `${getPartName(pet.hairD)?.substring(0, 4)}|${getPartName(pet.tailD)?.substring(0, 4)}|${getPartName(pet.eyesD)?.substring(0, 4)}`,
                 ])
                 .slice(0, 25)
         );
@@ -99,28 +99,17 @@ export function byId(obj, id) {
 }
 
 export function getLifeStage(createdAt) {
-    const createdDate = new Date(createdAt);
+    const createdDate = moment(createdAt);
     // get total seconds between the times
-    let delta = Math.abs(Date.now() - createdDate) / 1000;
+    const diffInDays = Math.abs(moment().diff(createdDate, 'days'));
+    const diffInHours = Math.abs(moment().diff(createdDate, 'hours') - diffInDays * 24);
 
-    // calculate (and subtract) whole days
-    let days = Math.floor(delta / 86400);
-    delta -= days * 86400;
+    let ret = `${diffInHours}h`;
 
-    // calculate (and subtract) whole hours
-    let hours = Math.floor(delta / 3600) % 24;
-    delta -= hours * 3600;
-
-    // calculate (and subtract) whole minutes
-    let minutes = Math.floor(delta / 60) % 60;
-    delta -= minutes * 60;
-
-    let ret = `${hours}h`;
-
-    if (days > 6) {
+    if (diffInDays >= 6) {
         return 'Adult';
-    } else if (days > 0) {
-        ret = `${days}d ${ret}`;
+    } else if (diffInDays > 0) {
+        ret = `${diffInDays}d ${ret}`;
     }
 
     return ret;

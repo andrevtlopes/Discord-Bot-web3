@@ -1,7 +1,6 @@
 import {
     CommandInteraction,
     GuildMemberRoleManager,
-    RoleResolvable,
 } from 'discord.js';
 import User from '../models/user.model';
 import add from './add';
@@ -29,7 +28,11 @@ export default async function buySubscription(
             await (member?.roles as GuildMemberRoleManager).add(role as any);
         }
 
-        const now = new Date(); //creates date object at current time
+        const now = Date.now(); //creates date object at current time
+
+        // subscriptionDue = now + 7 days
+        user.subscriptionDue = new Date(now + 7 * 24 * 60 * 60 * 1000);
+        user.save();
 
         await interaction.editReply({ content: 'Subscribed until next week' });
         console.log(`[SUBSCRIBE][${interaction.user.username}]`);
@@ -38,7 +41,7 @@ export default async function buySubscription(
         setTimeout(async function () {
             console.log('Role ended');
             await (member?.roles as GuildMemberRoleManager).remove(role as any);
-        }, user.subscriptionDue.getTime() - now.getTime());
+        }, user.subscriptionDue.getTime() - now);
     } else {
         await interaction.editReply({
             content: 'Something went wrong, try again or send a ticket',

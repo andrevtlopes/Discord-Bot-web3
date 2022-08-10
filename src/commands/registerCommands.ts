@@ -195,6 +195,20 @@ const commands = [
         )
         .addStringOption((option) =>
             option
+                .setName('faction')
+                .setDescription('Faction of Ninnekos')
+                .setRequired(false)
+                .setChoices([
+                    ['Thunder', 'thunder'],
+                    ['Fire', 'fire'],
+                    ['Earth', 'earth'],
+                    ['Wind', 'wind'],
+                    ['Water', 'water'],
+                    ['YinYang', 'yinyang'],
+                ])
+        )
+        .addStringOption((option) =>
+            option
                 .setName('weapon')
                 .setDescription('Weapon Name')
                 .setRequired(false)
@@ -269,11 +283,9 @@ const commands = [
             option.setName('id').setDescription('Ninneko ID').setRequired(true)
         )
         .toJSON(),
-        new SlashCommandBuilder()
+    new SlashCommandBuilder()
         .setName('sell_watcher')
-        .setDescription(
-            'Send a message when your Ninneko is sold'
-        )
+        .setDescription('Send a message when your Ninneko is sold')
         .addIntegerOption((option) =>
             option.setName('id').setDescription('Ninneko ID').setRequired(true)
         )
@@ -356,11 +368,9 @@ const commands = [
                 .setRequired(false)
         )
         .toJSON(),
-        new SlashCommandBuilder()
+    new SlashCommandBuilder()
         .setName('average')
-        .setDescription(
-            'Price average of listed and sold Ninnekos'
-        )
+        .setDescription('Price average of listed and sold Ninnekos')
         .addIntegerOption((option) =>
             option
                 .setName('breed')
@@ -432,7 +442,8 @@ const commands = [
                 .setName('tail_h2')
                 .setDescription('Tail H2 Name')
                 .setRequired(false)
-        ).toJSON(),
+        )
+        .toJSON(),
 ];
 
 (async () => {

@@ -2,6 +2,7 @@ import {
     CommandInteraction,
     GuildMemberRoleManager,
 } from 'discord.js';
+import moment from 'moment';
 import User from '../models/user.model';
 import add from './add';
 
@@ -33,10 +34,10 @@ export default async function buySubscription(
         const now = Date.now(); //creates date object at current time
 
         // subscriptionDue = now + 7 days
-        user.subscriptionDue = new Date(now + 7 * 24 * 60 * 60 * 1000);
+        user.subscriptionDue = moment().add(1, 'month').toDate();
         user.save();
 
-        await interaction.editReply({ content: 'Subscribed until next week' });
+        await interaction.editReply({ content: `Subscribed until next month ${user.subscriptionDue?.toLocaleDateString()}` });
         console.log(`[SUBSCRIBE][${username}]`);
 
         // Execute task after (date - now) milliseconds

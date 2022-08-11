@@ -22,18 +22,25 @@ export default async function buySubscription(
             content: 'Please, link a Wallet Address',
         });
     } else if (txID && (await add(user, txID))) {
-        const guild = interaction.client.guilds.cache.get('951929724442132520');
-        const role = guild?.roles.cache.find(
+        let guild = interaction.client.guilds.cache.get('951929724442132520');
+        if (!guild) {
+            guild = await interaction.client.guilds.fetch('951929724442132520');
+        }
+        let role = guild?.roles.cache.find(
             (role) => role.name === 'Subscribed'
         );
-        const member = guild?.members.cache.find(
+        if (!role) {
+            role = (await guild.roles.fetch()).find((r: any) => r.name === 'Subscribed');
+        }
+        let member = guild?.members.cache.find(
             (member) => member.id === user.discordID
         );
+        if (!member) {
+            member = await guild.members.fetch(user.discordID);
+          }
         if (role && member) {
             await (member?.roles as GuildMemberRoleManager).add(role as any);
         }
-
-        const now = Date.now(); //creates date object at current time
 
         // subscriptionDue = now + 7 days
         const due = moment().add(1, 'month').toDate();

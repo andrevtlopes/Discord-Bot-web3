@@ -9,21 +9,32 @@ export default async function add(user: User, txID: string): Promise<boolean> {
     const tx = await provider.getTransaction(txID);
     const receipt = await tx.wait(2);
     const busd = ERC20('0xe9e7cea3dedca5984780bafc599bd69add087d56');
-    // const busd = ERC20('0x09c5e27780138e4693e8a66f40c8508eb2719082');
+    // const busd = ERC20('0x1DEC50e5531452B1168962f40EAd44Da45C380DC'); //testnet
 
     const { address: busdAddress, topics } = busd.filters.Transfer(
         user.publicAddress,
         process.env.SUBSCRIPTION_ADDRESS
     );
 
-    if (txID === user.txID || receipt.confirmations > 201600) {
+    console.info('[DEBUG] ', receipt);
+
+    if (receipt.from.toLowerCase() !== user.publicAddress.toLowerCase()) {
+        throw new BotError("From Wallet doesn't match");
+    }
+
+    if (txID === user.txID) {
         throw new BotError('This transaction was already used, try another');
     }
 
+    if (receipt.confirmations > 201600) {
+        throw new BotError('This transaction is not usable anymore');
+    }
+
     for (const log of receipt.logs) {
-        if (_.isEqual(log.topics, topics)) {
+        console.info('[DEBUG] ', log.topics, topics);
+        if (_.isEqual(topics, log.topics)) {
             const value = utils.formatEther(parseInt(log.data, 16).toString());
-            console.log(value)
+            console.info(value)
             if (value === '20.0') {
                 user.subscriptionDue ||= new Date();
                 user.subscriptionDue.setDate(user.subscriptionDue.getDate() + 7);
@@ -34,11 +45,9 @@ export default async function add(user: User, txID: string): Promise<boolean> {
                 return true;
             }
             else {
-                throw new BotError('The value of BUSD is not right, please send the right amount and token (20 BUSD) or open a ticket');
+                throw new BotError('The value of BUSD is not right, please send the right amount of tokens (20 BUSD) or open a ticket');
             }
-            
         }
     }
-
-    return false;
+    throw new BotError('Transaction ID is not right');
 }

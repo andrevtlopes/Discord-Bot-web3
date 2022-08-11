@@ -9,8 +9,10 @@ export default async function buySubscription(
     user: User | null,
     interaction: CommandInteraction
 ) {
+    const username = interaction.user.username;
     const txID = interaction.options.getString('transaction_id')?.toLowerCase();
     await interaction.editReply({ content: 'Working on it!' });
+    console.info(`[INFO][${username}] txID: ${txID}`);
 
     if (!user?.publicAddress) {
         await interaction.editReply({
@@ -35,7 +37,7 @@ export default async function buySubscription(
         user.save();
 
         await interaction.editReply({ content: 'Subscribed until next week' });
-        console.log(`[SUBSCRIBE][${interaction.user.username}]`);
+        console.log(`[SUBSCRIBE][${username}]`);
 
         // Execute task after (date - now) milliseconds
         setTimeout(async function () {

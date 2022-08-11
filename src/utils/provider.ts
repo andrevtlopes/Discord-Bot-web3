@@ -1,10 +1,10 @@
 import { getNetwork } from '@ethersproject/networks';
 import { providers } from 'ethers';
 
-const network = getNetwork(56);
+const network = getNetwork(parseInt(process.env.CHAIN_ID ?? '56'));
 const provider =
-    network.name === 'unknown'
-        ? new providers.JsonRpcProvider('http://localhost:8545/')
-        : new providers.JsonRpcProvider('https://bsc-dataseed1.ninicoin.io/');
+    network.name === 'bnb'
+        ? new providers.JsonRpcProvider('https://bsc-dataseed1.ninicoin.io/')
+        : new providers.JsonRpcProvider('https://data-seed-prebsc-1-s1.binance.org:8545/');
 
 export default provider;

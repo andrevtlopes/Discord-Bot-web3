@@ -19,10 +19,10 @@ import getMissingNinnekos from './utils/getMissingNinnekos';
 
 async function main() {
     let disableRecently = false;
-    if (process.env.NODE_ENV !== 'production') {
-        disableRecently = true;
-        console.log('Recently disabled!');
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    //     disableRecently = true;
+    //     console.log('Recently disabled!');
+    // }
     const client = new Discord.Client({
         intents: [
             'GUILDS',
@@ -125,6 +125,7 @@ async function main() {
             }
         } catch (e: any) {
             if (e instanceof BotError) {
+                console.error('[ERROR] ', e);
                 await interaction.editReply({ content: e.message });
             } else {
                 try {

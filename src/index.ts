@@ -16,6 +16,27 @@ import BotError from './BotError';
 import isUserDM from './utils/isUserDM';
 import { partTypes } from './parts';
 import getMissingNinnekos from './utils/getMissingNinnekos';
+import Bree from 'bree';
+
+export const client = new Discord.Client({
+    intents: [
+        'GUILDS',
+        'GUILD_MESSAGES',
+        'DIRECT_MESSAGES',
+        'GUILD_PRESENCES',
+        'GUILD_MEMBERS'
+    ],
+    partials: ['CHANNEL'],
+});
+
+Bree.extend(require("@breejs/ts-worker"));
+
+export const bree = new Bree({
+    jobs: ['test.ts'],
+    acceptedExtensions: [".mts", ".mjs", ".ts"],
+});
+
+bree.start();
 
 async function main() {
     let disableRecently = false;
@@ -23,16 +44,7 @@ async function main() {
     //     disableRecently = true;
     //     console.log('Recently disabled!');
     // }
-    const client = new Discord.Client({
-        intents: [
-            'GUILDS',
-            'GUILD_MESSAGES',
-            'DIRECT_MESSAGES',
-            'GUILD_PRESENCES',
-            'GUILD_MEMBERS'
-        ],
-        partials: ['CHANNEL'],
-    });
+
     client.login(process.env.BOT_TOKEN);
 
     const endpoint = 'https://api.ninneko.com/graphql';
@@ -223,7 +235,8 @@ async function main() {
     // Create new tables
     await sequelize.sync();
 
-    await rolesTimeout(client);
+    await rolesTimeout(bree);
+    console.info('[Bree] ', bree.config.jobs);
     await getMissingNinnekos(graphClient);
 
     console.log('[SETUP] Finished');

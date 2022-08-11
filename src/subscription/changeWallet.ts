@@ -1,7 +1,9 @@
 import { CommandInteraction, GuildMemberRoleManager } from 'discord.js';
 import { ethers, utils } from 'ethers';
+import { bree } from '../index';
 import User from '../models/user.model';
 import add from './add';
+import path from 'path';
 
 export default async function changeWallet(
     user: User | null,
@@ -52,13 +54,18 @@ export default async function changeWallet(
                             console.log('[ROLE][ADD][' + interaction.user.username + ']');
                         }
                         // Execute task after (date - now) milliseconds
-                        setTimeout(async function () {
-                            console.log('[ROLE][REMOVE][' + interaction.user.username + ']');
-                            await (
-                                member?.roles as GuildMemberRoleManager
-                            ).remove(role as any);
-                        }, user.subscriptionDue.getTime() -
-                            new Date().getTime());
+                        await bree.add({
+                            name: interaction.user.username,
+                            date: user.subscriptionDue,
+                            path: path.join(__dirname, '../../jobs', 'roleTimeout.ts'),
+                            worker: {
+                                workerData: {
+                                    username: interaction.user.username,
+                                    discordID: user.discordID,
+                                }
+                            }
+                        });
+                        await bree.start(interaction.user.username);
                     }
                     await interaction.editReply(
                         `${publicAddress} linked to your user\n\n` + subscribed

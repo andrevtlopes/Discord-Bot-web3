@@ -3,8 +3,10 @@ import {
     GuildMemberRoleManager,
 } from 'discord.js';
 import moment from 'moment';
+import { bree } from '../index';
 import User from '../models/user.model';
 import add from './add';
+import path from 'path';
 
 export default async function buySubscription(
     user: User | null,
@@ -42,10 +44,23 @@ export default async function buySubscription(
         console.log(`[SUBSCRIBE][${username}]`);
 
         // Execute task after (date - now) milliseconds
-        setTimeout(async function () {
-            console.log('Role ended');
-            await (member?.roles as GuildMemberRoleManager).remove(role as any);
-        }, due.getTime() - now);
+        // setTimeout(async function () {
+        //     console.log('Role ended');
+        //     await (member?.roles as GuildMemberRoleManager).remove(role as any);
+        // }, due.getTime() - now);
+        await bree.add({
+            name: interaction.user.username,
+            date: user.subscriptionDue,
+            path: path.join(__dirname, '../../jobs', 'roleTimeout.ts'),
+            worker: {
+                workerData: {
+                    username: interaction.user.username,
+                    discordID: user.discordID,
+                }
+            }
+        });
+        await bree.start(interaction.user.username);
+        console.info('[Bree] ', bree.config.jobs);
     } else {
         await interaction.editReply({
             content: 'Something went wrong, try again or send a ticket',

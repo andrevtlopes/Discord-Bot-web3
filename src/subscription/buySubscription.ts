@@ -34,17 +34,18 @@ export default async function buySubscription(
         const now = Date.now(); //creates date object at current time
 
         // subscriptionDue = now + 7 days
-        user.subscriptionDue = moment().add(1, 'month').toDate();
+        const due = moment().add(1, 'month').toDate();
+        user.subscriptionDue = due;
         user.save();
 
-        await interaction.editReply({ content: `Subscribed until next month ${user.subscriptionDue?.toLocaleDateString()}` });
+        await interaction.editReply({ content: `Subscribed until next month ${due.toLocaleDateString()}` });
         console.log(`[SUBSCRIBE][${username}]`);
 
         // Execute task after (date - now) milliseconds
         setTimeout(async function () {
             console.log('Role ended');
             await (member?.roles as GuildMemberRoleManager).remove(role as any);
-        }, user.subscriptionDue.getTime() - now);
+        }, due.getTime() - now);
     } else {
         await interaction.editReply({
             content: 'Something went wrong, try again or send a ticket',

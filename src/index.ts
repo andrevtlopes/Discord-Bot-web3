@@ -118,7 +118,7 @@ async function main() {
                 }
             } else {
                 if (commandName === 'linkarwallet') {
-                    await subscription.buySubscription(user, interaction);
+                    await subscription.changeWallet(user, interaction);
                 } else if (commandName === 'comprarvip') {
                     await subscription.buySubscription(user, interaction);
                 } else if (commandName === 'vertempo') {

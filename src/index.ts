@@ -77,13 +77,15 @@ async function main() {
                     await interaction.editReply('Pong!');
                 } else if (commandName === 'search') {
                     await search.simple(graphClient, interaction);
-                } else if (commandName === 'subscribe') {
+                } else if (commandName === 'comprarvip') {
                     const subCommand = interaction.options.getSubcommand();
-                    if (subCommand === 'info') {
+                    if (subCommand === 'vertempo') {
                         await subscription.info(user, interaction);
                     } else {
-                        await interaction.editReply('Already Subscribed');
+                        await interaction.editReply('Você já está inscrito!');
                     }
+                } else if (commandName === 'vertempo') {
+                    await subscription.info(user, interaction);
                 } else if (commandName === 'snipe') {
                     const subCommand = interaction.options.getSubcommand();
                     if (subCommand === 'add') {
@@ -93,10 +95,10 @@ async function main() {
                     } else if (subCommand === 'info') {
                         await sniper.check(user, interaction);
                     }
-                } else if (commandName === 'help') {
+                } else if (commandName === 'ajuda') {
                     await interaction.editReply(
                         `\`\`\`${messages.helpSubscribed}\`\`\`` +
-                            '\nTo see how to use this functions, please go to <#954038774860492860>'
+                            '\nPara ver como se usa essa função, vá para o canal <#954038774860492860>'
                     );
                 } else if (commandName === 'show') {
                     const subCommand = interaction.options.getSubcommand();
@@ -115,7 +117,10 @@ async function main() {
                     await ninnekos.sellWatcher(user, interaction, graphClient);
                 }
             } else {
-                if (commandName === 'subscribe') {
+                if (commandName === 'linkarwallet') {
+                    await subscription.buySubscription(user, interaction);
+                }
+                else if (commandName === 'subscribe') {
                     const subCommand = interaction.options.getSubcommand();
                     if (subCommand === 'buy') {
                         await subscription.buySubscription(user, interaction);
@@ -124,14 +129,14 @@ async function main() {
                     } else if (subCommand === 'info') {
                         await subscription.info(user, interaction);
                     }
-                } else if (commandName === 'help') {
+                } else if (commandName === 'ajuda') {
                     await interaction.editReply(
                         `\`\`\`${messages.helpUnsubscribe}\`\`\`` +
-                            '\nTo see how to use this functions, please go to <#954038774860492860>'
+                            '\nPara ver como se usa essa função, vá para o canal <#954038774860492860>'
                     );
                 } else {
                     await interaction.editReply(
-                        'Please, subscribe to use this command'
+                        'Por favor, compre o VIP para usar este comando'
                     );
                 }
             }
@@ -142,7 +147,7 @@ async function main() {
             } else {
                 try {
                     const reply =
-                        'Something went wrong, try again or send a help ticket. <#954042095348375572>';
+                        'Algo deu errado, tente novamente ou abra um ticket com o suporte. <#954042095348375572>';
                     if (interaction.replied) {
                         await interaction.editReply(reply);
                     } else {
@@ -168,15 +173,14 @@ async function main() {
                 where: { discordID: msg.author.id || '' },
             });
             let availableCommands = {
-                'This is a private bot that need to be bought.': '',
-                '\nTo buy the bot please type:': '',
-                '/subscribe': ['wallet (your wallet address here)'],
-                '\nExample: /subscribe wallet 0xf3C149335645d6bf09c023e3Ec1Ef3974c94b63': '',
-                '\nAfter linking your wallet to the bot you can:': '',
-                '\n/subscribe': ['buy'],
-                '\nTo buy access to the bot.': '',
-                '\nFor more help type:': '',
-                '/help': '',
+                'Compre sua inscricao para o AlphaC': '',
+                '/linkarwallet': ['(endereço da sua wallet)'],
+                '\nExemplo: /linkarwallet 0xf3C149335645d6bf09c023e3Ec1Ef3974c94b63': '',
+                '\nDepois de linkar sua wallet você pode:': '',
+                '\n/comprarvip': '(endereço da transação hash)',
+                '\nPara comprar acesso ao AlphaC.': '',
+                '\nPara mais ajuda:': '',
+                '/ajuda': '',
             };
 
             if (user?.isSubscribed()) {
@@ -208,10 +212,10 @@ async function main() {
             }
 
             msg.channel.send(
-                'Available commands:\n```' +
+                'Comandos disponíveis\n```' +
                     commands.join('\n') +
                     '```' +
-                    '\nTo see how to use this functions, please go to <#954038774860492860>'
+                    '\nPara ver como se usa essa função, vá para o canal <#954038774860492860>'
             );
         }
 

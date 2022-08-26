@@ -14,14 +14,19 @@ export default async function buySubscription(
 ) {
     const username = interaction.user.username;
     const txID = interaction.options.getString('transaction_id')?.toLowerCase();
-    await interaction.editReply({ content: 'Working on it!' });
+    await interaction.editReply({ content: 'Espere...' });
     console.info(`[INFO][${username}] txID: ${txID}`);
 
     if (!user?.publicAddress) {
         await interaction.editReply({
-            content: 'Please, link a Wallet Address',
+            content: 'Por favor, link uma Wallet',
         });
     } else if (txID && (await add(user, txID))) {
+        // subscriptionDue = now + 7 days
+        const due = moment().add(1, 'month').toDate();
+        user.subscriptionDue = due;
+        await user.save();
+
         let guild = interaction.client.guilds.cache.get('951929724442132520');
         if (!guild) {
             guild = await interaction.client.guilds.fetch('951929724442132520');
@@ -42,12 +47,7 @@ export default async function buySubscription(
             await (member?.roles as GuildMemberRoleManager).add(role as any);
         }
 
-        // subscriptionDue = now + 7 days
-        const due = moment().add(1, 'month').toDate();
-        user.subscriptionDue = due;
-        user.save();
-
-        await interaction.editReply({ content: `Subscribed until next month ${due.toLocaleDateString()}` });
+        await interaction.editReply({ content: `Seu VIP vai até o próximo mês ${due.toLocaleDateString()}` });
         console.log(`[SUBSCRIBE][${username}]`);
 
         // Execute task after (date - now) milliseconds
@@ -70,7 +70,7 @@ export default async function buySubscription(
         console.info('[Bree] ', bree.config.jobs);
     } else {
         await interaction.editReply({
-            content: 'Something went wrong, try again or send a ticket',
+            content: 'Algo deu errado, tente novamente ou abra um ticket com o suporte. <#954042095348375572>',
         });
     }
 }

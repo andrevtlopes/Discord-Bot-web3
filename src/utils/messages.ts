@@ -1,35 +1,37 @@
 const helpUnsubscribe =
-    "HOW TO SUBSCRIBE?\
-\nFirst, send 20 BUSD to this wallet:\
+    "COMO COMPRAR VIP?\
+\nPrimeiro, mande 20 BUSD para essa carteira:\
 \n0xa24d8b3637e112489B0C956eEe2Cd8bEc826d6FF\
 \n\
-\nSecond, copy the transaction hash from the 20 BUSD transaction.\
+\nCopie a hash da transação feita (transação de 20 BUSD).\
 \n\
-\nThird, type /subscribe wallet (insert here your wallet)\
+\nDepois escreva /linkarwallet (escreva sua wallet)\
 \n\
-\nFourth, type /subscribe buy (insert here the transaction hash)\
+\nApós linkar sua wallet /comprarvip (escreva a hash da transação)\
 \n\
-\nAnd its done, your acess is granted to the bot.\
+\nE está pronto, seu acesso ao AlphaC está garantido.\
 \n\
-\n/subscribe wallet [bep20_address]     <- Link your bep-20 wallet to your discord user\
-\n                                      (only need to do one time) \
-\n/subscribe buy [transaction_id]       <- Then you can send your transaction hash and\
-\n                                      the bot will automatically verify your payment\
 \n\
-\nHOW DOES IT WORK?\
-\nAll interactions with our features are done preferably via DM with VVNeko Bot#0285 (here).\
-\nAfter purchasing the subscription you will have access to our features and our private channel where you will receive support and exchange experiences with other users.\
+\nQUANTO CUSTA?\
+\n20 BUSD por mês\
 \n\
-\nHOW MUCH DOES IT COST?\
-\n20 BUSD per week\
-\n\
-\nBE AWARE OF SCAMMERS!\
-\nOur team (beside VVNeko Bot#0285) will NEVER direct message you.\
-\nBEFORE sending your BUSDs make sure you are talking to the correct bot. To do this go to the NPS Server member list (upper right), right click on VV Bot Bot, and click on 'message'.";
+\nCUIDADO COM SCAM!\
+\nNosso time (beside VVNeko Bot#0285) nunca irá te mandar mensagem direta.";
+
+// \n/subscribe wallet [bep20_address]     <- Link your bep-20 wallet to your discord user\
+// \n                                      (only need to do one time) \
+// \n/subscribe buy [transaction_id]       <- Then you can send your transaction hash and\
+// \n    
+// \nHOW DOES IT WORK?\
+// \nAll interactions with our features are done preferably via DM with VVNeko Bot#0285 (here).\
+// \nAfter purchasing the subscription you will have access to our features and our private channel where you will receive support and exchange experiences with other users.\
+// \n\                                  the bot will automatically verify your payment\
+// \nANTES de enviar seus BUSDs make sure you are talking to the correct bot. To do this go to the NPS Server member list (upper right), right click on VV Bot Bot, and click on 'message'.";
+
 
 const welcome =
-    'Hi!\
-\nWelcome to VVNeko Bot!\
+    'Olá!\
+\nBem vindo ao bot do AlphaC!\
 \n\
 \n' + helpUnsubscribe;
 
@@ -73,6 +75,6 @@ const commmandsToString = (input: any) => {
 };
 
 const helpSubscribed =
-    'In construction!!!\n\n' + commmandsToString(helpCommands);
+    'Em construção!!!\n\n' + commmandsToString(helpCommands);
 
 export default { welcome, helpUnsubscribe, helpSubscribed };

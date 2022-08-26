@@ -13,12 +13,12 @@ export default async function changeWallet(
 
     if (publicAddress && !utils.isAddress(publicAddress)) {
         await interaction.editReply({
-            content: 'Please, send a valid BEP-20 Address',
+            content: 'Por favor, mande um endereço BEP-20 válido',
         });
     } else {
         if (user?.publicAddress) {
             await interaction.editReply({
-                content: 'Wallet already linked',
+                content: 'Wallet já está linkada',
             });
         } else {
             if (!user && publicAddress) {
@@ -29,10 +29,10 @@ export default async function changeWallet(
                     });
                     const subscribed =
                         user?.subscriptionDue.getTime() > new Date().getTime()
-                            ? `Subscribe until <t:${
+                            ? `VIP até <t:${
                                   user?.subscriptionDue.getTime() / 1000
                               }:d>`
-                            : 'Now, subscribe to have access to the bot\n`/subscribe buy`';
+                            : 'Agora, compre o vip para ter acesso ao servidor\n`/comprarvip`';
 
                     if (
                         user?.subscriptionDue.getTime() > new Date().getTime()
@@ -68,21 +68,21 @@ export default async function changeWallet(
                         await bree.start(interaction.user.username);
                     }
                     await interaction.editReply(
-                        `${publicAddress} linked to your user\n\n` + subscribed
+                        `${publicAddress} linkado ao seu usuario\n\n` + subscribed
                     );
                 }
             } else if (user && publicAddress && !user.publicAddress) {
                 user.publicAddress = publicAddress.toLowerCase();
                 user.save();
                 await interaction.editReply({
-                    content: `${publicAddress} linked to your user`,
+                    content: `${publicAddress} linkado ao seu usuario`,
                 });
                 console.log(
                     `[WALLET][${interaction.user.username}] ${publicAddress}`
                 );
             } else {
                 await interaction.editReply({
-                    content: 'Something went wrong, try again or send a ticket',
+                    content: 'Algo deu errado, tente novamente ou abra um ticket com o suporte. <#954042095348375572>',
                 });
             }
         }

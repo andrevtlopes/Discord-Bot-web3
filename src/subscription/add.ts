@@ -45,7 +45,7 @@ export default async function add(user: User, txID: string): Promise<boolean> {
                 return true;
             }
             else {
-                throw new BotError('The value of BUSD is not right, please send the right amount of tokens (20 BUSD) or open a ticket');
+                throw new BotError('O valor de BUSD não está correto, por favor mande a quantidade certa de tokens (20 BUSD) ou abra um ticket');
             }
         }
     }

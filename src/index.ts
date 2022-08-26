@@ -119,16 +119,18 @@ async function main() {
             } else {
                 if (commandName === 'linkarwallet') {
                     await subscription.buySubscription(user, interaction);
-                }
-                else if (commandName === 'subscribe') {
-                    const subCommand = interaction.options.getSubcommand();
-                    if (subCommand === 'buy') {
-                        await subscription.buySubscription(user, interaction);
-                    } else if (subCommand === 'wallet') {
-                        await subscription.changeWallet(user, interaction);
-                    } else if (subCommand === 'info') {
-                        await subscription.info(user, interaction);
-                    }
+                } else if (commandName === 'comprarvip') {
+                    await subscription.buySubscription(user, interaction);
+                } else if (commandName === 'vertempo') {
+                    await subscription.info(user, interaction);
+                // }
+                    // if (subCommand === 'buy') {
+                    //     await subscription.buySubscription(user, interaction);
+                    // } else if (subCommand === 'wallet') {
+                    //     await subscription.changeWallet(user, interaction);
+                    // } else if (subCommand === 'info') {
+                    //     await subscription.info(user, interaction);
+                    // }
                 } else if (commandName === 'ajuda') {
                     await interaction.editReply(
                         `\`\`\`${messages.helpUnsubscribe}\`\`\`` +
